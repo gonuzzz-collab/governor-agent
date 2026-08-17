@@ -11,7 +11,7 @@ echo "# GoNucleo Project Doctor"
 echo "- Modo: report-only"
 echo "- Escrituras realizadas: no"
 echo "- Stack: python"
-for tool in python3; do
+for tool in python3 uv; do
   if command -v "${tool}" >/dev/null 2>&1; then
     echo "- [OK] ${tool}"
   else
@@ -19,4 +19,16 @@ for tool in python3; do
     status=1
   fi
 done
+
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PYTHON_BIN="${PROJECT_DIR}/.venv/bin/python"
+if [[ ! -x "${PYTHON_BIN}" ]]; then
+  echo "- [FAIL] project virtual environment missing; run uv sync --locked"
+  status=1
+elif "${PYTHON_BIN}" -c 'import pydantic, strands' >/dev/null 2>&1; then
+  echo "- [OK] locked Python dependencies"
+else
+  echo "- [FAIL] locked Python dependencies unavailable"
+  status=1
+fi
 exit "${status}"

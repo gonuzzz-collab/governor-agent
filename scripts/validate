@@ -9,5 +9,10 @@ fi
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REPO_ROOT="$(cd "${PROJECT_DIR}/../.." && pwd)"
 
-"${REPO_ROOT}/.skills/factory-check" --project "${PROJECT_DIR}" --strict
+if [[ -x "${REPO_ROOT}/.skills/factory-check" ]]; then
+  "${REPO_ROOT}/.skills/factory-check" --project "${PROJECT_DIR}" --strict
+else
+  echo "[SKIP] Private factory-check is unavailable; running standalone project gates."
+fi
+"${PROJECT_DIR}/scripts/doctor"
 "${PROJECT_DIR}/scripts/test"

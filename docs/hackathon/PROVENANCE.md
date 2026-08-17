@@ -44,6 +44,8 @@ submission boundary: the submission is Governor, not the factory.
 |---|---|---|---|---|
 | Python | Python Software Foundation | Project floor planned at 3.10 or newer | Standard language and runtime | Normal dependency disclosure |
 | Strands Agents SDK | Strands Agents and AWS | 1.52.0 observed 2026-08-17 | Required open-source agent framework, Apache-2.0 | Pin version and link official docs |
+| Pydantic | Pydantic maintainers | 2.13.4 observed 2026-08-17 | Structured validation dependency, MIT | Pinned runtime dependency |
+| Hatchling | PyPA | 1.32.0 observed 2026-08-17 | Reproducible build backend, MIT | Pinned build dependency |
 | Python standard library | Python Software Foundation | Runtime-provided | Standard library | No special pre-existing disclosure |
 | Apache License 2.0 | Apache Software Foundation | 2.0 | Project license text | Required public license |
 
@@ -53,9 +55,10 @@ Additional dependencies must be added only when implemented and recorded with ex
 
 | Component | Repository | Created | Initial evidence | Status |
 |---|---|---:|---|---|
-| Governor Agent repository | apps/governor-agent independent Git repository | 2026-08-17 | Golden Path creation output; first commit pending at this revision | New hackathon work |
-| Phase 0 audit and architecture boundary | Governor repository | 2026-08-17 | This document set | New hackathon work |
-| Domain, tools, synthetic factory, Strands agent and demos | Governor repository | Not yet at Phase 0 | Future commits only | Planned |
+| Governor Agent repository | apps/governor-agent independent Git repository | 2026-08-17 | Initial commit `9a4bdcf` | New hackathon work |
+| Phase 0 audit and architecture boundary | Governor repository | 2026-08-17 | Initial commit `9a4bdcf` | New hackathon work |
+| Deterministic governance domain | Governor repository | 2026-08-17 | This increment's next commit | New hackathon work |
+| Tools, synthetic factory, Strands agent and demos | Governor repository | Not yet implemented | Future commits only | Planned |
 
 ## UNCERTAIN OR NEEDS REVIEW
 

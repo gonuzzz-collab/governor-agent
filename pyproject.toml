@@ -2,9 +2,21 @@
 name = "governor-agent"
 version = "0.1.0"
 description = "Govern AI-assisted software changes through explicit authority, policies, permits, validators, evidence, and human escalation."
-requires-python = ">=3.12"
-dependencies = []
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic==2.13.4",
+    "strands-agents==1.52.0",
+]
+
+[project.scripts]
+governor = "governor_agent.cli:main"
+
+[build-system]
+requires = ["hatchling==1.32.0"]
+build-backend = "hatchling.build"
 
 [tool.ruff]
 line-length = 100
-target-version = "py312"
+target-version = "py310"
