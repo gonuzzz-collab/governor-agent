@@ -42,7 +42,7 @@ submission boundary: the submission is Governor, not the factory.
 
 | Component | Source | Version or status | Nature | Disclosure |
 |---|---|---|---|---|
-| Python | Python Software Foundation | Project floor planned at 3.10 or newer | Standard language and runtime | Normal dependency disclosure |
+| Python | Python Software Foundation | Project floor 3.11; locked environment currently 3.12 | Standard language and runtime | Normal dependency disclosure |
 | Strands Agents SDK | Strands Agents and AWS | 1.52.0 observed 2026-08-17 | Required open-source agent framework, Apache-2.0 | Pin version and link official docs |
 | Pydantic | Pydantic maintainers | 2.13.4 observed 2026-08-17 | Structured validation dependency, MIT | Pinned runtime dependency |
 | Hatchling | PyPA | 1.32.0 observed 2026-08-17 | Reproducible build backend, MIT | Pinned build dependency |
@@ -60,7 +60,8 @@ Additional dependencies must be added only when implemented and recorded with ex
 | Deterministic governance domain | Governor repository | 2026-08-17 | Commit `5d28337` | New hackathon work |
 | Synthetic factory, validators, audit trail and CLI demos | Governor repository | 2026-08-17 | Commit `b5e0460` | New hackathon work |
 | Strands agent, custom tools and offline model double | Governor repository | 2026-08-17 | Commit `ca1559a` | New hackathon work |
-| Agent evaluation harness and audit verification | Governor repository | 2026-08-17 | This increment's next commit | New hackathon work |
+| Agent evaluation harness and audit verification | Governor repository | 2026-08-17 | Commit `f76751f` | New hackathon work |
+| Privacy-preserving real-factory inventory adapter | Governor repository | 2026-08-17 | This increment's next commit | New hackathon work; no private content copied |
 
 ## UNCERTAIN OR NEEDS REVIEW
 

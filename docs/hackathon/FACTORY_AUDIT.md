@@ -83,8 +83,10 @@ Governor core will depend on a GovernanceSource contract with operations concept
 get_project_context, get_golden_path, get_policies, get_capabilities, get_authority_model,
 get_permits, and get_validators.
 
-The first implementation will be SyntheticFactoryAdapter. A RealFactoryAdapter remains read-only and
-deferred until the public fixture and deterministic domain are stable.
+`SyntheticFactoryAdapter` now supports the public end-to-end workflow. The implemented
+`GoNucleoFactoryInventoryAdapter` consumes only aggregate, fixed real-factory metadata and reports
+readiness gaps. It intentionally does not implement `GovernanceSource`: full evaluation would be
+unsafe until capability, policy, authority, and persistent permit contracts exist.
 
 ## Public and private boundary
 

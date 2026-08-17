@@ -9,7 +9,11 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
-from governor_agent.adapters import GovernanceSourceError, SyntheticFactoryAdapter
+from governor_agent.adapters import (
+    GoNucleoFactoryInventoryAdapter,
+    GovernanceSourceError,
+    SyntheticFactoryAdapter,
+)
 from governor_agent.agent import AgentConsistencyError, AgentRunResult, GovernorAgentRunner
 from governor_agent.agent.provider import create_bedrock_model
 from governor_agent.audit import AuditIntegrityError, AuditStore
@@ -109,6 +113,18 @@ def _parser() -> argparse.ArgumentParser:
     verify.add_argument("record", type=Path)
     verify.add_argument("--audit-dir", type=Path, default=Path(".governor"))
     verify.add_argument("--format", choices=("text", "json"), default="text")
+
+    factory = subparsers.add_parser(
+        "inspect-factory",
+        help="Inspect fixed real-factory metadata without scanning applications.",
+    )
+    factory.add_argument("root", type=Path)
+    factory.add_argument("--format", choices=("text", "json"), default="text")
+    factory.add_argument(
+        "--require-ready",
+        action="store_true",
+        help="Return exit code 9 unless every required governance registry exists.",
+    )
     return parser
 
 
@@ -236,6 +252,25 @@ def _render_scenarios(
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
+        if args.command == "inspect-factory":
+            inventory = GoNucleoFactoryInventoryAdapter(args.root).inspect()
+            if args.format == "json":
+                print(json.dumps(inventory.model_dump(mode="json"), indent=2, sort_keys=True))
+            else:
+                print(f"Factory: {inventory.factory_id} ({inventory.factory_schema})")
+                print(f"Catalog projects: {inventory.project_count}")
+                print(
+                    "Governance evaluation ready: "
+                    f"{'YES' if inventory.ready_for_governance_evaluation else 'NO'}"
+                )
+                print("Sources:")
+                for source in inventory.sources:
+                    print(f"  - {source.source}: {source.readiness.value}")
+                print(f"Privacy: {inventory.privacy_boundary}")
+            if args.require_ready and not inventory.ready_for_governance_evaluation:
+                return 9
+            return 0
+
         if args.command == "verify-audit":
             record = AuditStore(args.audit_dir).verify(args.record)
             if args.format == "json":

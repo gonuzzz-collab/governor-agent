@@ -59,6 +59,10 @@ Verify one append-only decision record:
 
     .venv/bin/governor verify-audit .governor/runs/<run-id>.json
 
+Inspect only aggregate, fixed metadata from a local GoNucleo factory:
+
+    .venv/bin/governor inspect-factory /path/to/gonucleo
+
 Evaluate one structured request and emit automation-friendly JSON:
 
     .venv/bin/governor evaluate \
@@ -123,5 +127,8 @@ Apache-2.0. Third-party dependencies retain their own licenses.
   `--allow-paid-inference` before it can make a Bedrock call.
 - Implemented and demonstrated hardening: versioned agent evaluations, audit digest verification,
   tamper detection, and safe normal/verbose/debug output.
-- Next: additional failure-recovery tests and a read-only private factory adapter.
+- Implemented and locally demonstrated: privacy-preserving real-factory inventory adapter. Full
+  governance evaluation remains fail-closed until the factory defines machine-readable capability,
+  policy, authority, and persistent permit contracts.
+- Next: additional failure-recovery tests and clean-clone rehearsal.
 - Planned: optional AgentCore assessment only after the local MVP is hardened.

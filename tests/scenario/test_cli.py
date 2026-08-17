@@ -158,3 +158,28 @@ class CliScenarioTest(unittest.TestCase):
         self.assertIn("Decision ID: gov-", text)
         self.assertIn("Evidence IDs:", text)
         self.assertNotIn("test_normalize_key", text)
+
+    def test_real_factory_inspection_is_aggregate_only(self) -> None:
+        with tempfile.TemporaryDirectory() as directory, io.StringIO() as output:
+            root = Path(directory) / "factory"
+            (root / ".skills").mkdir(parents=True)
+            (root / ".gonucleo-factory.toml").write_text(
+                'schema = "factory.v1"\nid = "private-factory"\n', encoding="utf-8"
+            )
+            (root / ".skills" / "factory-catalog.toml").write_text(
+                """schema_version = 2
+[[projects]]
+id = "private-project-name"
+path = "apps/private-project-name"
+adoption = "legacy"
+portfolio = "legacy-review"
+""",
+                encoding="utf-8",
+            )
+            with contextlib.redirect_stdout(output):
+                code = main(["inspect-factory", str(root), "--format", "json"])
+            output_text = output.getvalue()
+            payload = json.loads(output_text)
+        self.assertEqual(code, 0)
+        self.assertEqual(payload["project_count"], 1)
+        self.assertNotIn("private-project-name", output_text)

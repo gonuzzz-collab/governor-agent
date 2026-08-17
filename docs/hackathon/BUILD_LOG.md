@@ -59,7 +59,7 @@ PROVENANCE.md instead of being presented as Governor progress.
 
 ## 2026-08-17 - Agent evaluations and audit integrity
 
-- Commit: pending this increment's commit.
+- Commit: `f76751f` (`feat: add agent evaluations and audit verification`).
 - Goal: make behavior and persisted evidence independently inspectable.
 - Result: versioned four-case evaluation suite, ten aggregate safe-autonomy metrics, append-only
   evaluation reports, canonical audit digest verification, tamper and symlink rejection, accurate
@@ -71,3 +71,16 @@ PROVENANCE.md instead of being presented as Governor progress.
   Bedrock production performance.
 - Contest relevance: provides repeatable evidence for technical implementation, safe autonomy, and
   presentation without hiding model or fixture limitations.
+
+## 2026-08-17 - Privacy-preserving real-factory inventory
+
+- Commit: pending this increment's commit.
+- Goal: prove post-contest utility without coupling Governor to private paths or fabricated schemas.
+- Result: fixed-path, non-recursive, read-only GoNucleo inventory adapter and CLI implemented; actual
+  factory inspected using aggregate output only; project identifiers and absolute paths excluded.
+- Tests: 49 tests passed before final documentation gate; actual inspection confirmed catalog and
+  tooling availability while full governance readiness remained false.
+- Important decision: no hypothetical registry filenames and no full `GovernanceSource` claim. The
+  missing capability, policy, authority, and persistent permit contracts have undefined locations.
+- Contest relevance: demonstrates a credible path to real adoption while preserving the public and
+  private boundary.

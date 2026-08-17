@@ -55,8 +55,9 @@ class AuditStore:
             "validations": [item.model_dump(mode="json") for item in validations],
         }
         unsigned = AuditRecord.model_validate({**payload, "record_digest": f"sha256:{'0' * 64}"})
+        unsigned_payload = unsigned.model_dump(mode="json", exclude={"record_digest"})
         record = unsigned.model_copy(
-            update={"record_digest": f"sha256:{self._record_digest(unsigned)}"}
+            update={"record_digest": f"sha256:{self._payload_digest(unsigned_payload)}"}
         )
 
         directory = self._root / "runs"
@@ -91,17 +92,19 @@ class AuditStore:
             raise AuditIntegrityError("audit record exceeds size limit")
         try:
             with resolved.open("r", encoding="utf-8") as stream:
-                record = AuditRecord.model_validate(json.load(stream))
+                raw_payload = json.load(stream)
+            record = AuditRecord.model_validate(raw_payload)
         except (OSError, UnicodeError, json.JSONDecodeError, ValidationError) as exc:
             raise AuditIntegrityError(f"invalid audit record: {exc}") from exc
-        expected = f"sha256:{self._record_digest(record)}"
+        unsigned_payload = dict(raw_payload)
+        unsigned_payload.pop("record_digest", None)
+        expected = f"sha256:{self._payload_digest(unsigned_payload)}"
         if not hmac.compare_digest(record.record_digest, expected):
             raise AuditIntegrityError("audit record digest mismatch")
         return record
 
     @staticmethod
-    def _record_digest(record: AuditRecord) -> str:
-        payload = record.model_dump(mode="json", exclude={"record_digest"})
+    def _payload_digest(payload: dict[str, object]) -> str:
         return hashlib.sha256(
             json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
         ).hexdigest()
