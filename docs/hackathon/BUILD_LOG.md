@@ -99,7 +99,7 @@ PROVENANCE.md instead of being presented as Governor progress.
 
 ## 2026-08-17 - AgentCore report-only evaluation
 
-- Commit: pending this documentation increment's commit.
+- Commit: `6a034d7` (`docs: evaluate AgentCore deployment path`).
 - Goal: determine whether cloud hosting materially improves the submission before adding AWS
   dependencies or resources.
 - Result: official Runtime, direct-deploy, observability, and pricing documentation reviewed;
@@ -109,3 +109,15 @@ PROVENANCE.md instead of being presented as Governor progress.
   credentials, budget, and explicit spend approval exist.
 - Contest relevance: preserves an AWS enhancement path without weakening the working local MVP or
   creating uncontrolled cost.
+
+## 2026-08-17 - Audited validator failure recovery
+
+- Commit: pending this increment's commit.
+- Goal: fail closed without losing evidence when approved validation cannot complete.
+- Result: a missing required validator definition becomes a typed `ERROR`; failed project tests
+  withhold raw output; both produce `VALIDATION_FAILED` and a verifiable audit record. Missing
+  evidence remains `INCOMPLETE_EVIDENCE` after passing tests.
+- Tests: 52 passed, including three new integration recovery cases; full static, compilation,
+  doctor, and factory baseline passed.
+- Contest relevance: demonstrates that Governor handles operational failure as governed work rather
+  than crashing or silently allowing the change.

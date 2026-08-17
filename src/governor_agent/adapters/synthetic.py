@@ -12,6 +12,7 @@ from governor_agent.adapters.contracts import (
     FactoryManifest,
     GoldenPathDocument,
     GovernanceSourceError,
+    ValidatorUnavailableError,
     ValidatorSpec,
 )
 from governor_agent.domain import (
@@ -66,7 +67,16 @@ class SyntheticFactoryAdapter:
         return matches[0] if matches else None
 
     def get_validator(self, validator_id: str) -> ValidatorSpec:
-        return self._find_one("validators.json", ValidatorSpec, "id", validator_id)
+        matches = [
+            item
+            for item in self._read_models("validators.json", ValidatorSpec)
+            if item.id == validator_id
+        ]
+        if len(matches) != 1:
+            raise ValidatorUnavailableError(
+                f"expected exactly one ValidatorSpec with id={validator_id!r}"
+            )
+        return matches[0]
 
     def _find_one(
         self,

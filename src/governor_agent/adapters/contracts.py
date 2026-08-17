@@ -22,6 +22,10 @@ class GovernanceSourceError(RuntimeError):
     """Raised when trusted governance data cannot satisfy its declared contract."""
 
 
+class ValidatorUnavailableError(GovernanceSourceError):
+    """Raised when a named validator has no unique approved definition."""
+
+
 class ValidatorKind(str, Enum):
     FILES_EXIST = "files_exist"
     PYTHON_UNITTEST = "python_unittest"

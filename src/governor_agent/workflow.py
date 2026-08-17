@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-from governor_agent.adapters import GovernanceSource
+from governor_agent.adapters import GovernanceSource, ValidatorUnavailableError
 from governor_agent.audit import AuditRecord, AuditStore
 from governor_agent.domain import (
     ChangeRequest,
@@ -14,6 +14,7 @@ from governor_agent.domain import (
     GovernanceDecision,
     GovernanceEvaluator,
     ValidationResult,
+    ValidationStatus,
 )
 from governor_agent.validation import ApprovedValidatorRunner
 
@@ -48,10 +49,21 @@ class GovernorWorkflow:
         validations: tuple[ValidationResult, ...] = ()
 
         if self._requires_validators(preliminary):
-            validations = tuple(
-                self._validators.run(self._source.get_validator(validator_id), request)
-                for validator_id in preliminary.validations_required
-            )
+            validation_results: list[ValidationResult] = []
+            for validator_id in preliminary.validations_required:
+                try:
+                    spec = self._source.get_validator(validator_id)
+                except ValidatorUnavailableError:
+                    validation_results.append(
+                        ValidationResult(
+                            validator_id=validator_id,
+                            status=ValidationStatus.ERROR,
+                            summary="Required approved validator definition is unavailable.",
+                        )
+                    )
+                    continue
+                validation_results.append(self._validators.run(spec, request))
+            validations = tuple(validation_results)
             context = context.model_copy(update={"validations": validations})
             decision = self._evaluator.evaluate(context)
         else:

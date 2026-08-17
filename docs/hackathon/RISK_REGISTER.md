@@ -10,6 +10,7 @@ Last reviewed: 2026-08-17
 | R-04 | Prompt injection changes agent behavior | High | High | Treat content as data, narrow tools, adversarial tests | Controlled in core suite; Bedrock eval pending |
 | R-05 | Path traversal or symlink escapes scope | Medium | Critical | Resolve and confine paths; test escapes | Controlled for implemented adapters/tools |
 | R-06 | Missing evidence causes false ALLOW | Medium | Critical | Deny by default, typed evidence, schema validation | Controlled by deterministic tests |
+| R-19 | Missing validator crashes without audit evidence | Medium | High | Typed validator-unavailable result and integration recovery tests | Controlled |
 | R-07 | Governor escalates every case | Medium | High | Safe scenario must close automatically; measure interruptions | Demo gate |
 | R-08 | Strands is ornamental | Medium | Critical | Real Agent, custom tools, structured output and observable loop | Controlled |
 | R-09 | Paid model calls make tests flaky | High | High | Deterministic model double and opt-in integration tests | Controlled |

@@ -26,6 +26,9 @@ Traversal, symlink escape, malformed policy, expired/missing permit, scope viola
 validator failure, missing evidence, prompt injection, model override, audit tampering, and CLI exit
 behavior are covered. The full suite passed 49 tests in the clean-clone rehearsal.
 
+After that rehearsal, three additional failure-recovery integrations raised the development-tree
+suite to 52 passing tests; the next clean-clone gate must confirm them before publication.
+
 ## Open risks
 
 - A real Bedrock model has not been evaluated for tool-selection or prompt-injection behavior.

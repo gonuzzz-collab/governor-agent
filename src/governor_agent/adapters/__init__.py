@@ -5,6 +5,7 @@ from governor_agent.adapters.contracts import (
     GoldenPathDocument,
     GovernanceSource,
     GovernanceSourceError,
+    ValidatorUnavailableError,
     ValidatorKind,
     ValidatorSpec,
 )
@@ -26,6 +27,7 @@ __all__ = [
     "RealFactoryInventory",
     "SourceReadiness",
     "SyntheticFactoryAdapter",
+    "ValidatorUnavailableError",
     "ValidatorKind",
     "ValidatorSpec",
 ]
