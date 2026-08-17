@@ -140,7 +140,7 @@ PROVENANCE.md instead of being presented as Governor progress.
 
 ## 2026-08-17 - Post-commit clean-clone verification
 
-- Commit: pending this evidence-only commit.
+- Commit: `3df1a8f` (`docs: record clean-clone ci evidence`).
 - Goal: verify the versioned CI increment outside the development worktree.
 - Result: a no-hardlink clone of `601b633` installed the exact lock and passed the standalone gate
   under CPython 3.11.15 and 3.12.13. The Python 3.11 run also produced the expected ALLOW, DENY, and
