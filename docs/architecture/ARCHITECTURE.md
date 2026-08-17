@@ -1,6 +1,6 @@
 # Governor Architecture
 
-Status: deterministic vertical slice implemented; Strands orchestration pending.
+Status: local Strands MVP implemented and demonstrated offline.
 
 ```mermaid
 flowchart TD
@@ -47,13 +47,20 @@ evidence into a fact. `GovernanceEvaluator` is the final authority for hard gate
 
 ## Current execution
 
-`GovernorWorkflow` loads the Golden Path and a structured context through `GovernanceSource`. It
-performs a preliminary fail-closed evaluation. Only if the sole gap is an approved validator does it
-run the fixed validator implementation. It then re-evaluates, produces a schema-validated decision,
-and appends a digest-bearing audit record. Denied scope never reaches validator execution.
+The Strands `Agent` selects three purpose-built tools: inspect the fixed change request, inspect the
+trusted governance source, and execute the authoritative workflow. Typed hooks record tool names
+without payloads. Strands then validates `AgentGovernanceReport` as structured output. Governor
+compares every authority-relevant report field with the deterministic decision and fails if the
+model contradicts it.
+
+`GovernorWorkflow` performs a preliminary fail-closed evaluation. Only if the sole gap is an
+approved validator does it run the fixed validator implementation. It then re-evaluates, produces a
+schema-validated decision, and appends a digest-bearing audit record. Denied scope never reaches
+validator execution.
 
 ## Provider boundary
 
-The upcoming agent layer will receive a configured Strands model. The contest preference is Amazon
-Bedrock, while local tests and the public offline demo use a deterministic model double. No default
-test or demo requires credentials, network access, or paid inference.
+The agent receives a configured Strands `Model`. The contest preference is Amazon Bedrock, while
+local tests and the public offline demo use an explicitly labeled deterministic model double. No
+default test or demo requires credentials, network access, or paid inference. Bedrock execution
+requires a separate CLI cost acknowledgement and has not been performed.

@@ -10,6 +10,8 @@ from pathlib import Path
 from pydantic import ValidationError
 
 from governor_agent.adapters import GovernanceSourceError, SyntheticFactoryAdapter
+from governor_agent.agent import AgentConsistencyError, AgentRunResult, GovernorAgentRunner
+from governor_agent.agent.provider import create_bedrock_model
 from governor_agent.audit import AuditStore
 from governor_agent.domain import ChangeRequest, DecisionStatus
 from governor_agent.workflow import GovernorWorkflow, WorkflowResult
@@ -56,6 +58,26 @@ def _parser() -> argparse.ArgumentParser:
     )
     demo.add_argument("--audit-dir", type=Path, default=Path(".governor"))
     demo.add_argument("--format", choices=("text", "json"), default="text")
+
+    agent_demo = subparsers.add_parser(
+        "agent-demo", help="Run the scenarios through a real Strands Agent tool loop."
+    )
+    agent_demo.add_argument("scenario", choices=("safe", "deny", "escalate", "all"))
+    agent_demo.add_argument(
+        "--factory",
+        type=Path,
+        default=_repo_root() / "fixtures" / "demo_factory",
+    )
+    agent_demo.add_argument("--audit-dir", type=Path, default=Path(".governor"))
+    agent_demo.add_argument("--format", choices=("text", "json"), default="text")
+    agent_demo.add_argument("--model", choices=("offline", "bedrock"), default="offline")
+    agent_demo.add_argument("--bedrock-model-id")
+    agent_demo.add_argument("--aws-region")
+    agent_demo.add_argument(
+        "--allow-paid-inference",
+        action="store_true",
+        help="Required acknowledgement before invoking Amazon Bedrock.",
+    )
     return parser
 
 
@@ -68,6 +90,31 @@ def _run(factory: Path, audit_dir: Path, request_path: Path) -> WorkflowResult:
     source = SyntheticFactoryAdapter(factory)
     workflow = GovernorWorkflow(source, AuditStore(audit_dir))
     return workflow.evaluate(_load_request(request_path))
+
+
+def _run_agent(
+    factory: Path,
+    audit_dir: Path,
+    request_path: Path,
+    *,
+    model_name: str,
+    model_id: str | None,
+    region: str | None,
+    allow_paid_inference: bool,
+) -> AgentRunResult:
+    model = None
+    if model_name == "bedrock":
+        if not allow_paid_inference:
+            raise ValueError("Bedrock requires --allow-paid-inference")
+        if model_id is None or region is None:
+            raise ValueError("Bedrock requires --bedrock-model-id and --aws-region")
+        model = create_bedrock_model(model_id=model_id, region_name=region)
+    return GovernorAgentRunner(
+        SyntheticFactoryAdapter(factory),
+        AuditStore(audit_dir),
+        request_path,
+        model=model,
+    ).run()
 
 
 def _record_label(result: WorkflowResult, audit_dir: Path) -> str:
@@ -101,13 +148,44 @@ def _render_text(result: WorkflowResult, audit_dir: Path, *, verbose: bool) -> N
     print(f"Audit record: {_record_label(result, audit_dir)}")
 
 
-def _render_json(result: WorkflowResult, audit_dir: Path) -> None:
-    payload = {
+def _result_payload(result: WorkflowResult, audit_dir: Path) -> dict[str, object]:
+    return {
         "decision": result.decision.model_dump(mode="json"),
         "validations": [item.model_dump(mode="json") for item in result.validations],
         "audit_record": _record_label(result, audit_dir),
     }
-    print(json.dumps(payload, indent=2, sort_keys=True))
+
+
+def _render_json(result: WorkflowResult, audit_dir: Path) -> None:
+    print(json.dumps(_result_payload(result, audit_dir), indent=2, sort_keys=True))
+
+
+def _render_scenarios(
+    results: list[tuple[str, WorkflowResult, AgentRunResult | None]],
+    audit_dir: Path,
+    *,
+    output_format: str,
+    verbose: bool,
+) -> None:
+    if output_format == "json":
+        payload = []
+        for scenario, workflow, agent_result in results:
+            item = {"scenario": scenario, **_result_payload(workflow, audit_dir)}
+            if agent_result is not None:
+                item["agent_report"] = agent_result.report.model_dump(mode="json")
+                item["strands_tools"] = list(agent_result.tool_trace)
+            payload.append(item)
+        print(json.dumps(payload[0] if len(payload) == 1 else payload, indent=2, sort_keys=True))
+        return
+
+    for scenario, workflow, agent_result in results:
+        if len(results) > 1:
+            print(f"\n=== {scenario.upper()} ===")
+        _render_text(workflow, audit_dir, verbose=verbose)
+        if verbose and agent_result is not None:
+            print("Strands tool loop:")
+            for name in agent_result.tool_trace:
+                print(f"  - {name}")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -121,20 +199,43 @@ def main(argv: list[str] | None = None) -> int:
             return EXIT_CODES[result.decision.status]
 
         scenarios = tuple(EXPECTED_DEMO) if args.scenario == "all" else (args.scenario,)
+        results: list[tuple[str, WorkflowResult, AgentRunResult | None]] = []
         unexpected = False
         for scenario in scenarios:
             request_path = args.factory / "scenarios" / f"{scenario}.json"
-            result = _run(args.factory, args.audit_dir, request_path)
-            if len(scenarios) > 1 and args.format == "text":
-                print(f"\n=== {scenario.upper()} ===")
-            _render_json(result, args.audit_dir) if args.format == "json" else _render_text(
-                result, args.audit_dir, verbose=args.verbose
-            )
-            unexpected |= result.decision.status not in EXPECTED_DEMO[scenario]
+            if args.command == "agent-demo":
+                agent_result = _run_agent(
+                    args.factory,
+                    args.audit_dir,
+                    request_path,
+                    model_name=args.model,
+                    model_id=args.bedrock_model_id,
+                    region=args.aws_region,
+                    allow_paid_inference=args.allow_paid_inference,
+                )
+                workflow = agent_result.workflow
+            else:
+                agent_result = None
+                workflow = _run(args.factory, args.audit_dir, request_path)
+            results.append((scenario, workflow, agent_result))
+            unexpected |= workflow.decision.status not in EXPECTED_DEMO[scenario]
+        _render_scenarios(
+            results,
+            args.audit_dir,
+            output_format=args.format,
+            verbose=args.verbose,
+        )
         if len(scenarios) > 1:
             return 1 if unexpected else 0
-        return EXIT_CODES[result.decision.status]
-    except (OSError, json.JSONDecodeError, ValidationError, GovernanceSourceError) as exc:
+        return EXIT_CODES[results[0][1].decision.status]
+    except (
+        OSError,
+        ValueError,
+        json.JSONDecodeError,
+        ValidationError,
+        GovernanceSourceError,
+        AgentConsistencyError,
+    ) as exc:
         print(f"Governor input error: {exc}", file=sys.stderr)
         return 2
 

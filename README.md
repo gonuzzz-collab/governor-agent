@@ -2,8 +2,9 @@
 
 Governor is a governance agent for AI-assisted software factories.
 
-Status: deterministic local workflow demonstrated. The Strands tool loop is the next increment, so
-this revision is not yet the contest-ready agent.
+Status: local Strands agent workflow implemented and demonstrated with an offline deterministic
+model double. Amazon Bedrock support is implemented but deliberately untested until credentials and
+cost authorization exist. This revision is an MVP, not yet the hardened contest submission.
 
 ## Propósito
 
@@ -42,9 +43,13 @@ Create an isolated environment and install exactly the locked dependencies:
 
     uv sync --locked
 
-Run all three public scenarios:
+Run all three public scenarios through the real Strands agent loop:
 
-    .venv/bin/governor --verbose demo all
+    .venv/bin/governor --verbose agent-demo all
+
+This offline command uses Strands `Agent`, custom tools, hooks, and structured output without
+network access or paid inference. `governor demo all` remains available to exercise only the
+deterministic layer.
 
 Evaluate one structured request and emit automation-friendly JSON:
 
@@ -65,7 +70,8 @@ returns zero only when all three outcomes match their declared demonstration con
     ./scripts/evidence --format json
 
 The default suite is offline and makes no paid model call. It validates domain rules, schema
-contracts, approved validator execution, audit persistence, and all three end-to-end scenarios.
+contracts, approved validator execution, audit persistence, the real Strands tool loop, structured
+output consistency, prompt-injection resistance, and all three end-to-end scenarios.
 
 ## Datos y privacidad
 
@@ -96,6 +102,10 @@ Apache-2.0. Third-party dependencies retain their own licenses.
 ## Implemented boundary
 
 - Implemented and demonstrated: typed domain, deterministic gates, synthetic factory adapter,
-  approved validators, append-only local audit records, CLI, and safe/deny/escalate scenarios.
-- Next: a real Strands `Agent` with purpose-built tools and a deterministic offline model double.
-- Planned: read-only private factory adapter, agent evaluations, and optional AgentCore assessment.
+  approved validators, append-only local audit records, CLI, safe/deny/escalate scenarios, and a
+  real Strands `Agent` tool loop with structured output and tool hooks.
+- Implemented but not remotely demonstrated: injected Amazon Bedrock provider. The CLI requires
+  `--allow-paid-inference` before it can make a Bedrock call.
+- Next: agent evaluations, additional security hardening, decision/evidence integrity checks, and
+  a read-only private factory adapter.
+- Planned: optional AgentCore assessment only after the local MVP is hardened.

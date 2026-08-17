@@ -29,7 +29,7 @@ PROVENANCE.md instead of being presented as Governor progress.
 
 ## 2026-08-17 - Synthetic end-to-end governance workflow
 
-- Commit: pending this increment's commit.
+- Commit: `b5e0460` (`feat: add synthetic governance workflow`).
 - Goal: complete the real-work workflow against a public, self-contained software factory.
 - Result: read-only `GovernanceSource` contract, synthetic adapter, two fixed approved validators,
   append-only digest-bearing audit records, human and JSON CLI output, stable exit codes, and safe,
@@ -41,3 +41,18 @@ PROVENANCE.md instead of being presented as Governor progress.
   kinds run and raw output is excluded from logs.
 - Contest relevance: demonstrates real end-to-end governance work, autonomy for safe changes,
   deterministic rejection, and a human escalation package. Strands orchestration remains pending.
+
+## 2026-08-17 - Strands Governor agent loop
+
+- Commit: pending this increment's commit.
+- Goal: make Strands central and non-ornamental without granting the model governance authority.
+- Result: one Strands `Agent`, three purpose-built custom tools, current structured-output API,
+  typed tool hooks, deterministic offline model double, verified agent/domain consistency, Bedrock
+  provider boundary, and `agent-demo` CLI implemented.
+- Tests: 39 tests passed; all three agent scenarios completed the four-step Strands trace; prompt
+  injection in an untrusted objective did not change authority; a contradictory model report was
+  rejected; Bedrock cost acknowledgement was enforced; all static and baseline checks passed.
+- Important decision: offline mode demonstrates orchestration reproducibly but is not represented as
+  production intelligence. Bedrock remains uncalled and unproven until human authorization.
+- Contest relevance: Strands now performs the actual inspection/evaluation tool loop and produces
+  schema-validated output while hard governance remains deterministic.
