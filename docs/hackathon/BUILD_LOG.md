@@ -150,3 +150,20 @@ PROVENANCE.md instead of being presented as Governor progress.
   selection, policy grounding, and evidence metrics 1.000; relevant false rates 0.000.
 - Limitation: this is local CI-equivalent evidence. A GitHub-hosted run is impossible before the
   repository publication gate is authorized.
+
+## 2026-08-17 - Publication boundary audit
+
+- Commit: pending this increment's commit.
+- Goal: reduce public-repository privacy, provenance, dependency-license, and supply-chain risk
+  without publishing or changing a remote.
+- Result: current files and independent history scanned with no personal-path, common-secret,
+  deleted-file, binary, or oversized-artifact finding. The expected `.env.example` contains no
+  values. Locked package metadata is compatible with normal Apache-2.0 distribution; no dependency
+  source is vendored. Public-facing script messages were converted to English.
+- Tests: strict factory validation initially caught that seven Spanish README labels are normative
+  Golden Path inputs. Those labels were restored, the exception was documented, and the full gate
+  was rerun rather than weakening the private factory contract.
+- Human gate: antecedent names, private commit identifiers, GoNucleo owner disclosure, Apache-2.0
+  acceptance, and actual publication still require explicit approval.
+- Contest relevance: protects the public/private boundary and makes the provenance disclosure
+  defensible without pretending an automated scan is legal or privacy authorization.

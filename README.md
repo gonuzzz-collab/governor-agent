@@ -119,7 +119,8 @@ reproducible evidence.
 
 Judging drafts: [free testing access](docs/submission/TESTING_ACCESS.md),
 [five-minute video plan](docs/submission/VIDEO_PLAN.md), and
-[security review](docs/submission/SECURITY_REVIEW.md).
+[security review](docs/submission/SECURITY_REVIEW.md). Publication remains gated by the
+[local privacy and IP audit](docs/hackathon/PUBLICATION_AUDIT.md).
 
 ## License
 

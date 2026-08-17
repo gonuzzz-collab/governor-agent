@@ -2,14 +2,14 @@
 set -uo pipefail
 
 if (( $# != 0 )); then
-  echo "Uso: scripts/doctor" >&2
+  echo "Usage: scripts/doctor" >&2
   exit 2
 fi
 
 status=0
 echo "# GoNucleo Project Doctor"
-echo "- Modo: report-only"
-echo "- Escrituras realizadas: no"
+echo "- Mode: report-only"
+echo "- Writes performed: no"
 echo "- Stack: python"
 for tool in python3 uv; do
   if command -v "${tool}" >/dev/null 2>&1; then

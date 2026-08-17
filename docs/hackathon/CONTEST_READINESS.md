@@ -17,6 +17,7 @@ Last reviewed: 2026-08-17
 | Agent evaluations | PASS | Four-case offline baseline |
 | Provenance disclosure | PASS FOR LOCAL | Final human/IP review pending |
 | Security review | PASS WITH OPEN CLOUD ITEMS | No cloud call or deployment tested |
+| Publication privacy scan | PASS WITH HUMAN GATE | No secret/path/binary finding; antecedent and owner disclosures need approval |
 | Testing access | DRAFT | Public clone URL pending publication |
 | Five-minute video plan | DRAFT | Recording and public upload pending |
 | Devpost copy | DRAFT | Human review and submission pending |

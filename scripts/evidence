@@ -64,8 +64,8 @@ def main() -> int:
         print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
     else:
         print("# GoNucleo Project Evidence")
-        print(f"- Proyecto: {PROJECT_DIR.name}")
-        print(f"- Resultado: {status.upper()}")
+        print(f"- Project: {PROJECT_DIR.name}")
+        print(f"- Result: {status.upper()}")
         for name, check_status in checks.items():
             print(f"- {name}: {check_status}")
     return 0 if status == "ok" else 1

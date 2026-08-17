@@ -2,7 +2,7 @@
 set -euo pipefail
 
 if (( $# != 0 )); then
-  echo "Uso: scripts/test" >&2
+  echo "Usage: scripts/test" >&2
   exit 2
 fi
 

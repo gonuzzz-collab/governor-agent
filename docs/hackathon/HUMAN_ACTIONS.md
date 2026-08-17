@@ -13,11 +13,12 @@ They do not block the local MVP unless stated.
 | Medium | Create or confirm AWS account and least-privilege credentials | Before Bedrock testing | AWS CLI absent | Authentication and billing |
 | Medium | Approve AWS budget and cost ceiling | Before paid call or deployment | No budget observed | Money and risk |
 | Medium | Choose Bedrock model and region for the first live evaluation | After credentials and budget | Provider boundary only | Model access, regional availability, and cost |
-| High | Approve public repository creation and push | After privacy and license review | Local only | Publication |
+| High | Approve antecedent and owner identifiers for public disclosure | Before publication | Automated audit passed; PUBLICATION_AUDIT.md lists exact gate | Privacy and ownership |
+| High | Approve public repository creation and push | After privacy and license review | Local only; no remote changed | Publication |
 | High | Approve public YouTube or Vimeo video | Before submission | Not created | Publication rights |
 | High | Approve Devpost submission | By 2026-09-14 17:00 PT | Not created | Binding entry |
 | Medium | Decide whether to deploy AgentCore | After local MVP and estimate | Deferred | Spend and cloud footprint |
-| Medium | Review final provenance and IP disclosure | Before publication | Baseline exists | Ownership |
+| Medium | Review final provenance and Apache-2.0 IP disclosure | Before publication | Engineering license review passed; human acceptance pending | Ownership |
 | Low | Decide whether to publish builder.aws posts | Optional bonus | Journal reserved only | Public authorship |
 
 ## AWS cost controls to establish
