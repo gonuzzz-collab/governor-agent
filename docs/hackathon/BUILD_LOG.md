@@ -153,7 +153,7 @@ PROVENANCE.md instead of being presented as Governor progress.
 
 ## 2026-08-17 - Publication boundary audit
 
-- Commit: pending this increment's commit.
+- Commit: `8d00ff4` (`docs: audit public repository boundary`).
 - Goal: reduce public-repository privacy, provenance, dependency-license, and supply-chain risk
   without publishing or changing a remote.
 - Result: current files and independent history scanned with no personal-path, common-secret,
