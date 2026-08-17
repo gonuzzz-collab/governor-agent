@@ -74,7 +74,7 @@ PROVENANCE.md instead of being presented as Governor progress.
 
 ## 2026-08-17 - Privacy-preserving real-factory inventory
 
-- Commit: pending this increment's commit.
+- Commit: `99ff87d` (`feat: add read-only factory inventory adapter`).
 - Goal: prove post-contest utility without coupling Governor to private paths or fabricated schemas.
 - Result: fixed-path, non-recursive, read-only GoNucleo inventory adapter and CLI implemented; actual
   factory inspected using aggregate output only; project identifiers and absolute paths excluded.
@@ -84,3 +84,15 @@ PROVENANCE.md instead of being presented as Governor progress.
   missing capability, policy, authority, and persistent permit contracts have undefined locations.
 - Contest relevance: demonstrates a credible path to real adoption while preserving the public and
   private boundary.
+
+## 2026-08-17 - Clean-clone and submission-draft gate
+
+- Commit: pending this documentation increment's commit.
+- Goal: prove standalone judging access and prepare accurate submission materials.
+- Result: a no-hardlink local clone under `/tmp` recreated the Python 3.12 environment from
+  `uv.lock`, passed 49 tests, ran safe/deny/escalate through Strands, and produced the 4/4
+  evaluation baseline. Testing-access, video, Devpost, security, readiness, journal, and regression
+  documents drafted.
+- Important decision: the failed shared Regression Guard wrapper is disclosed separately; direct
+  critical validation passed, but the incompatible wrapper is not relabeled as a pass.
+- Contest relevance: provides the reproducibility and presentation foundation required for judging.

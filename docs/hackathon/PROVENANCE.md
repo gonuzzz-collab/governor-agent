@@ -61,7 +61,8 @@ Additional dependencies must be added only when implemented and recorded with ex
 | Synthetic factory, validators, audit trail and CLI demos | Governor repository | 2026-08-17 | Commit `b5e0460` | New hackathon work |
 | Strands agent, custom tools and offline model double | Governor repository | 2026-08-17 | Commit `ca1559a` | New hackathon work |
 | Agent evaluation harness and audit verification | Governor repository | 2026-08-17 | Commit `f76751f` | New hackathon work |
-| Privacy-preserving real-factory inventory adapter | Governor repository | 2026-08-17 | This increment's next commit | New hackathon work; no private content copied |
+| Privacy-preserving real-factory inventory adapter | Governor repository | 2026-08-17 | Commit `99ff87d` | New hackathon work; no private content copied |
+| Submission drafts and clean-clone evidence | Governor repository | 2026-08-17 | This documentation increment's next commit | New hackathon work |
 
 ## UNCERTAIN OR NEEDS REVIEW
 

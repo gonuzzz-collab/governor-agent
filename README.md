@@ -114,6 +114,10 @@ not copied into this repository. See [PROVENANCE.md](docs/hackathon/PROVENANCE.m
 See [Local demo](docs/demo/LOCAL_DEMO.md) and [Agent evaluations](docs/testing/EVALUATIONS.md) for
 reproducible evidence.
 
+Judging drafts: [free testing access](docs/submission/TESTING_ACCESS.md),
+[five-minute video plan](docs/submission/VIDEO_PLAN.md), and
+[security review](docs/submission/SECURITY_REVIEW.md).
+
 ## License
 
 Apache-2.0. Third-party dependencies retain their own licenses.

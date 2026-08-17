@@ -24,6 +24,9 @@ not prove that any cloud account, credential, remote repository, or deployed ser
 | AWS credentials | Unavailable through the observed CLI path | Bedrock and AgentCore remain explicitly unverified and disabled. |
 | Existing project scanner | Available at the parent factory | Scanner was used only for discovery; it is not a Governor dependency. |
 
+The implemented project uses a locked Python 3.12 virtual environment with a declared Python 3.11
+floor. A clean clone recreated the environment and passed validation without global Strands.
+
 ## Workspace topology
 
 The parent monorepo contains applications, shared code, project memory, agent skills, deterministic

@@ -12,6 +12,7 @@ They do not block the local MVP unless stated.
 | High | Create or confirm AWS Builder ID | Required for submission | Not verified | Personal account |
 | Medium | Create or confirm AWS account and least-privilege credentials | Before Bedrock testing | AWS CLI absent | Authentication and billing |
 | Medium | Approve AWS budget and cost ceiling | Before paid call or deployment | No budget observed | Money and risk |
+| Medium | Choose Bedrock model and region for the first live evaluation | After credentials and budget | Provider boundary only | Model access, regional availability, and cost |
 | High | Approve public repository creation and push | After privacy and license review | Local only | Publication |
 | High | Approve public YouTube or Vimeo video | Before submission | Not created | Publication rights |
 | High | Approve Devpost submission | By 2026-09-14 17:00 PT | Not created | Binding entry |

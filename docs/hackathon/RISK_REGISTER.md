@@ -18,7 +18,7 @@ Last reviewed: 2026-08-17
 | R-12 | Strands API changes | Medium | Medium | Pin 1.52.0 and use current APIs | Controlled |
 | R-13 | Dirty parent contaminates commits | Medium | High | Independent Git; never stage parent | Controlled |
 | R-14 | Capability proposal is mistaken for registry | Medium | High | Synthetic adapter first; real adapter fails closed | Controlled |
-| R-15 | Demo is not reproducible | Medium | High | Scenario tests, one-command demo, clean-clone rehearsal | Automated path controlled; clean-clone rehearsal pending |
+| R-15 | Demo is not reproducible | Medium | High | Scenario tests, one-command demo, clean-clone rehearsal | Controlled locally; public URL pending |
 | R-16 | Public testing needs private credentials | Medium | High | Free local synthetic path with no credentials | Architecture control |
 | R-17 | License or ownership blocks publication | Low for new code | Critical | Apache-2.0, no proprietary reuse, final IP review | Open |
 | R-18 | Inference is presented as fact | Medium | High | Typed evidence kinds and exact model/domain consistency check | Controlled for MVP |
