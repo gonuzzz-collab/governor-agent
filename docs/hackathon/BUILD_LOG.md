@@ -87,7 +87,7 @@ PROVENANCE.md instead of being presented as Governor progress.
 
 ## 2026-08-17 - Clean-clone and submission-draft gate
 
-- Commit: pending this documentation increment's commit.
+- Commit: `ed1c142` (`docs: add contest readiness and submission drafts`).
 - Goal: prove standalone judging access and prepare accurate submission materials.
 - Result: a no-hardlink local clone under `/tmp` recreated the Python 3.12 environment from
   `uv.lock`, passed 49 tests, ran safe/deny/escalate through Strands, and produced the 4/4
@@ -96,3 +96,16 @@ PROVENANCE.md instead of being presented as Governor progress.
 - Important decision: the failed shared Regression Guard wrapper is disclosed separately; direct
   critical validation passed, but the incompatible wrapper is not relabeled as a pass.
 - Contest relevance: provides the reproducibility and presentation foundation required for judging.
+
+## 2026-08-17 - AgentCore report-only evaluation
+
+- Commit: pending this documentation increment's commit.
+- Goal: determine whether cloud hosting materially improves the submission before adding AWS
+  dependencies or resources.
+- Result: official Runtime, direct-deploy, observability, and pricing documentation reviewed;
+  minimal CodeZip architecture, cost illustration, USD 5 proposed ceiling, lifecycle, cleanup, and
+  human gates documented.
+- Decision: defer implementation and deployment until an authorized Bedrock model evaluation,
+  credentials, budget, and explicit spend approval exist.
+- Contest relevance: preserves an AWS enhancement path without weakening the working local MVP or
+  creating uncontrolled cost.

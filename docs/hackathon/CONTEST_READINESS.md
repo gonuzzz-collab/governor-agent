@@ -23,7 +23,7 @@ Last reviewed: 2026-08-17
 | AWS Builder ID | BLOCKED ON HUMAN | Account identity required |
 | AWS credits/budget | BLOCKED ON HUMAN | Terms, billing, and cost decision required |
 | Bedrock integration test | NOT RUN | Credentials and spend authorization required |
-| AgentCore | DEFERRED | No local-MVP need established; cost assessment pending |
+| AgentCore | DEFERRED AFTER ASSESSMENT | Potential value; Bedrock eval, credentials, USD 5 ceiling, and human approval required |
 
 Governor is an implemented local MVP, not yet a contest-ready public submission. Human-owned
 identity, publication, cloud-cost, and final IP gates remain intentionally unresolved.

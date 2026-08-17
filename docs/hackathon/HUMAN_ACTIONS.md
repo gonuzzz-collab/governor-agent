@@ -29,4 +29,8 @@ They do not block the local MVP unless stated.
 - Runtime idle and maximum lifetime if AgentCore is approved.
 - Cleanup plan and proof after deployment.
 
+The current report-only recommendation is a maximum USD 5 first-experiment ceiling, no more than
+20 invocations, one runtime/endpoint, short session limits, and same-session teardown. This proposal
+does not authorize spend.
+
 No code will assume that a ChatGPT or Codex subscription includes AWS or model API credits.
