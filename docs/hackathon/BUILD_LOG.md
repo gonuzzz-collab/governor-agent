@@ -112,7 +112,7 @@ PROVENANCE.md instead of being presented as Governor progress.
 
 ## 2026-08-17 - Audited validator failure recovery
 
-- Commit: pending this increment's commit.
+- Commit: `546f963` (`fix: audit required validator failures`).
 - Goal: fail closed without losing evidence when approved validation cannot complete.
 - Result: a missing required validator definition becomes a typed `ERROR`; failed project tests
   withhold raw output; both produce `VALIDATION_FAILED` and a verifiable audit record. Missing
@@ -121,3 +121,19 @@ PROVENANCE.md instead of being presented as Governor progress.
   doctor, and factory baseline passed.
 - Contest relevance: demonstrates that Governor handles operational failure as governed work rather
   than crashing or silently allowing the change.
+
+## 2026-08-17 - Reproducible public CI
+
+- Commit: pending this increment's commit.
+- Goal: make the same standalone quality gate executable by judges and contributors on every push
+  and pull request.
+- Result: read-only GitHub Actions workflow added with third-party actions pinned by commit digest,
+  locked uv/Ruff dependencies, and Python 3.11/3.12 coverage. The project validation script now
+  owns static checks rather than relying on a host-global Ruff installation.
+- Tests: 52 passed under Python 3.11.15 and 3.12.13; both runs passed Ruff check, formatting, doctor,
+  and the private factory baseline. Strands safe/deny/escalate and the 4/4 evaluation baseline also
+  passed locally. A hosted run remains impossible until publication is authorized.
+- Important decision: CI has read-only repository permission and performs no Bedrock call,
+  deployment, release, commit, or push.
+- Contest relevance: judges receive a visible, repeatable quality gate without credentials or paid
+  inference.

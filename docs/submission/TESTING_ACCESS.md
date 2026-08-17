@@ -13,13 +13,17 @@ cd governor-agent
 uv sync --locked
 ```
 
-Python 3.11 or newer and `uv` are required. The tested clean-clone environment used Python 3.12.
+Python 3.11 or newer and `uv` are required. The local quality gate is tested on Python 3.11 and
+3.12; public CI repeats both versions after publication.
 
 ## Validate
 
 ```bash
 ./scripts/validate
 ```
+
+This command runs locked Ruff checks and all deterministic, integration, security, scenario,
+Strands, and agent-evaluation tests. It does not need AWS credentials.
 
 ## Demonstrate
 

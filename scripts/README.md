@@ -4,7 +4,7 @@ These project-local adapters expose the Python stack through four stable GoNucle
 
 ## Commands
 
-- scripts/validate runs the strict factory contract and focal tests.
+- scripts/validate runs the strict factory contract when available, locked Ruff checks, and focal tests.
 - scripts/doctor performs read-only toolchain diagnostics.
 - scripts/test selects focal project tests without installing dependencies.
 - scripts/evidence runs validation and diagnostics and emits a gonucleo.evidence.v1 envelope.

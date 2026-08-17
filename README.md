@@ -89,6 +89,9 @@ The default suite is offline and makes no paid model call. It validates domain r
 contracts, approved validator execution, audit persistence, the real Strands tool loop, structured
 output consistency, prompt-injection resistance, and all three end-to-end scenarios.
 
+The public CI workflow runs the locked gate and agent evaluation on Python 3.11 and 3.12. Its
+third-party actions are pinned by commit digest and its token has read-only repository permission.
+
 ## Datos y privacidad
 
 - Read-only first.
@@ -134,5 +137,8 @@ Apache-2.0. Third-party dependencies retain their own licenses.
 - Implemented and locally demonstrated: privacy-preserving real-factory inventory adapter. Full
   governance evaluation remains fail-closed until the factory defines machine-readable capability,
   policy, authority, and persistent permit contracts.
-- Next: additional failure-recovery tests and clean-clone rehearsal.
-- Planned: optional AgentCore assessment only after the local MVP is hardened.
+- Implemented and demonstrated hardening: required-validator failures become audited, fail-closed
+  decisions; locked static checks and the full suite pass on Python 3.11 and 3.12.
+- Assessed and deferred: optional AgentCore Runtime deployment until Bedrock behavior, identity,
+  budget, and explicit spend gates are resolved.
+- Next: authorized Bedrock behavior evaluation and public-repository privacy/IP review.

@@ -10,6 +10,11 @@ dependencies = [
     "strands-agents==1.52.0",
 ]
 
+[dependency-groups]
+dev = [
+    "ruff==0.15.13",
+]
+
 [project.scripts]
 governor = "governor_agent.cli:main"
 

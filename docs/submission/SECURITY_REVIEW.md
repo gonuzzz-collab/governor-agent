@@ -19,6 +19,8 @@ Status: local MVP review completed 2026-08-17; cloud and publication reviews rem
 - Real factory inventory uses fixed paths, no recursive application scan, aggregate output, and no
   project identifiers or absolute paths.
 - Bedrock execution requires explicit `--allow-paid-inference` acknowledgement.
+- Public CI grants only `contents: read`, pins third-party actions by commit digest, and makes no
+  cloud deployment or paid inference call.
 
 ## Tests observed
 
@@ -27,7 +29,8 @@ validator failure, missing evidence, prompt injection, model override, audit tam
 behavior are covered. The full suite passed 49 tests in the clean-clone rehearsal.
 
 After that rehearsal, three additional failure-recovery integrations raised the development-tree
-suite to 52 passing tests; the next clean-clone gate must confirm them before publication.
+suite to 52 passing tests. The same locked gate passes locally on Python 3.11 and 3.12; a final clean
+clone rehearsal remains required after committing the CI increment.
 
 ## Open risks
 

@@ -9,6 +9,7 @@ Last reviewed: 2026-08-17
 | Deterministic governance | PASS | Domain and scenario suites |
 | Safety | PASS WITH RISK | Security tests; Bedrock behavior not evaluated |
 | Reproducibility | PASS | Clean clone, locked install, validation, demo, eval |
+| Public CI definition | PASS LOCALLY / NOT HOSTED | SHA-pinned read-only workflow; Python 3.11/3.12 local gates pass; GitHub run requires publication |
 | Public synthetic demo | PASS | Safe, deny, escalate |
 | Apache-2.0 license | PASS | Top-level LICENSE |
 | English README | PASS | Public instructions and boundaries |
