@@ -124,7 +124,7 @@ PROVENANCE.md instead of being presented as Governor progress.
 
 ## 2026-08-17 - Reproducible public CI
 
-- Commit: pending this increment's commit.
+- Commit: `601b633` (`ci: add reproducible validation workflow`).
 - Goal: make the same standalone quality gate executable by judges and contributors on every push
   and pull request.
 - Result: read-only GitHub Actions workflow added with third-party actions pinned by commit digest,
@@ -137,3 +137,16 @@ PROVENANCE.md instead of being presented as Governor progress.
   deployment, release, commit, or push.
 - Contest relevance: judges receive a visible, repeatable quality gate without credentials or paid
   inference.
+
+## 2026-08-17 - Post-commit clean-clone verification
+
+- Commit: pending this evidence-only commit.
+- Goal: verify the versioned CI increment outside the development worktree.
+- Result: a no-hardlink clone of `601b633` installed the exact lock and passed the standalone gate
+  under CPython 3.11.15 and 3.12.13. The Python 3.11 run also produced the expected ALLOW, DENY, and
+  ESCALATE outcomes through Strands and passed the versioned evaluation 4/4. The tracked clone
+  remained clean after all commands.
+- Tests: 52/52 on each Python version; Ruff check and formatting pass; agent decision, tool
+  selection, policy grounding, and evidence metrics 1.000; relevant false rates 0.000.
+- Limitation: this is local CI-equivalent evidence. A GitHub-hosted run is impossible before the
+  repository publication gate is authorized.

@@ -28,9 +28,10 @@ Traversal, symlink escape, malformed policy, expired/missing permit, scope viola
 validator failure, missing evidence, prompt injection, model override, audit tampering, and CLI exit
 behavior are covered. The full suite passed 49 tests in the clean-clone rehearsal.
 
-After that rehearsal, three additional failure-recovery integrations raised the development-tree
-suite to 52 passing tests. The same locked gate passes locally on Python 3.11 and 3.12; a final clean
-clone rehearsal remains required after committing the CI increment.
+After that rehearsal, three additional failure-recovery integrations raised the suite to 52 tests.
+A subsequent no-hardlink clone of commit `601b633` passed the locked gate on Python 3.11.15 and
+3.12.13. The Python 3.11 run also passed all three Strands scenarios and the 4/4 behavior evaluation;
+the clone retained a clean tracked worktree.
 
 ## Open risks
 

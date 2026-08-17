@@ -13,8 +13,8 @@ cd governor-agent
 uv sync --locked
 ```
 
-Python 3.11 or newer and `uv` are required. The local quality gate is tested on Python 3.11 and
-3.12; public CI repeats both versions after publication.
+Python 3.11 or newer and `uv` are required. A no-hardlink clean clone passed the locked quality gate
+on Python 3.11.15 and 3.12.13; public CI repeats both versions after publication.
 
 ## Validate
 
