@@ -2,8 +2,8 @@
 
 Governor is a governance agent for AI-assisted software factories.
 
-Status: discovery foundation. The repository and audit boundary exist; the functional agent is not
-implemented yet.
+Status: deterministic local workflow demonstrated. The Strands tool loop is the next increment, so
+this revision is not yet the contest-ready agent.
 
 ## Propósito
 
@@ -32,15 +32,30 @@ agent's authority are escalated to a human with evidence.
 
 The LLM is not the governance authority.
 
-See [Architecture options](docs/hackathon/ARCHITECTURE_OPTIONS.md) and
+See the [architecture diagram](docs/architecture/ARCHITECTURE.md),
+[architecture options](docs/hackathon/ARCHITECTURE_OPTIONS.md), and
 [Factory audit](docs/hackathon/FACTORY_AUDIT.md).
 
 ## Ejecutar
 
-The functional CLI will be introduced after the deterministic governance domain. The generated
-package baseline can currently be invoked with:
+Create an isolated environment and install exactly the locked dependencies:
 
-    PYTHONPATH=src python3 -m governor_agent
+    uv sync --locked
+
+Run all three public scenarios:
+
+    .venv/bin/governor --verbose demo all
+
+Evaluate one structured request and emit automation-friendly JSON:
+
+    .venv/bin/governor evaluate \
+      fixtures/demo_factory/scenarios/safe.json \
+      --factory fixtures/demo_factory \
+      --format json
+
+Individual scenario exit codes are `0` for allowed work, `3` for human escalation, `4` for denial,
+`5` for incomplete evidence, `6` for validation failure, and `2` for invalid input. `demo all`
+returns zero only when all three outcomes match their declared demonstration contract.
 
 ## Validar
 
@@ -49,8 +64,8 @@ package baseline can currently be invoked with:
     ./scripts/validate
     ./scripts/evidence --format json
 
-These commands currently validate the generated project baseline only. They are not evidence of a
-functional Governor agent.
+The default suite is offline and makes no paid model call. It validates domain rules, schema
+contracts, approved validator execution, audit persistence, and all three end-to-end scenarios.
 
 ## Datos y privacidad
 
@@ -64,9 +79,10 @@ functional Governor agent.
 
 ## Operación y recuperación
 
-The repository currently persists no project data and performs no deployment. Future audit records
-will remain inside the evaluated project scope and must be reproducible from synthetic inputs.
-Recovery is Git-based until a separately documented persistent-state design exists.
+Governor is currently an Observer. It does not mutate the governed project or deploy anything. Each
+run appends a digest-bearing JSON record under `.governor/runs/`; prior runs are never overwritten.
+Raw validator output is withheld from audit logs. Delete local demo evidence only when it is no
+longer required; source recovery remains Git-based.
 
 ## Provenance
 
@@ -77,7 +93,9 @@ not copied into this repository. See [PROVENANCE.md](docs/hackathon/PROVENANCE.m
 
 Apache-2.0. Third-party dependencies retain their own licenses.
 
-## Next increment
+## Implemented boundary
 
-Implement the deterministic governance domain, synthetic factory adapter, and safe, deny, and
-escalate scenario tests before integrating Strands.
+- Implemented and demonstrated: typed domain, deterministic gates, synthetic factory adapter,
+  approved validators, append-only local audit records, CLI, and safe/deny/escalate scenarios.
+- Next: a real Strands `Agent` with purpose-built tools and a deterministic offline model double.
+- Planned: read-only private factory adapter, agent evaluations, and optional AgentCore assessment.

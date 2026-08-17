@@ -57,8 +57,9 @@ Additional dependencies must be added only when implemented and recorded with ex
 |---|---|---:|---|---|
 | Governor Agent repository | apps/governor-agent independent Git repository | 2026-08-17 | Initial commit `9a4bdcf` | New hackathon work |
 | Phase 0 audit and architecture boundary | Governor repository | 2026-08-17 | Initial commit `9a4bdcf` | New hackathon work |
-| Deterministic governance domain | Governor repository | 2026-08-17 | This increment's next commit | New hackathon work |
-| Tools, synthetic factory, Strands agent and demos | Governor repository | Not yet implemented | Future commits only | Planned |
+| Deterministic governance domain | Governor repository | 2026-08-17 | Commit `5d28337` | New hackathon work |
+| Synthetic factory, validators, audit trail and CLI demos | Governor repository | 2026-08-17 | This increment's next commit | New hackathon work |
+| Strands agent and agent evaluations | Governor repository | Not yet implemented | Future commits only | Planned |
 
 ## UNCERTAIN OR NEEDS REVIEW
 

@@ -1,0 +1,36 @@
+from __future__ import annotations
+
+import json
+import os
+import shutil
+import tempfile
+import unittest
+from pathlib import Path
+
+from governor_agent.adapters import GovernanceSourceError, SyntheticFactoryAdapter
+from governor_agent.domain import ChangeRequest
+
+
+ROOT = Path(__file__).resolve().parents[2]
+FACTORY = ROOT / "fixtures" / "demo_factory"
+
+
+class SyntheticAdapterContractTest(unittest.TestCase):
+    def test_factory_root_symlink_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            link = Path(directory) / "factory-link"
+            os.symlink(FACTORY, link, target_is_directory=True)
+            with self.assertRaisesRegex(GovernanceSourceError, "must not be a symlink"):
+                SyntheticFactoryAdapter(link)
+
+    def test_malformed_policy_file_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            copied = Path(directory) / "factory"
+            shutil.copytree(FACTORY, copied)
+            with (copied / "policies.json").open("w", encoding="utf-8") as stream:
+                json.dump({"not": "a policy list"}, stream)
+            source = SyntheticFactoryAdapter(copied)
+            with (copied / "scenarios" / "safe.json").open(encoding="utf-8") as stream:
+                request = ChangeRequest.model_validate(json.load(stream))
+            with self.assertRaisesRegex(GovernanceSourceError, "invalid policies.json"):
+                source.get_policies(request)

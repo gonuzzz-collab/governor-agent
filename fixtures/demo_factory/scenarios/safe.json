@@ -1,0 +1,14 @@
+{
+  "id": "demo-safe-001",
+  "project": "demo-config-service",
+  "objective": "Normalize configuration keys without changing persistence ownership.",
+  "actor": "demo-builder",
+  "capability": "modify-configuration",
+  "action": "change",
+  "requested_scope": ["src/config/**", "tests/**", "docs/**"],
+  "files": ["src/config/service.py", "tests/test_service.py", "docs/configuration.md"],
+  "effects": ["implementation-change", "documentation-update"],
+  "environment": "local",
+  "risk_level": "LOW",
+  "expected_evidence": ["file-inspection", "test-results"]
+}

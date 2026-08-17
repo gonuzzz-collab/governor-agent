@@ -1,0 +1,10 @@
+[
+  {
+    "id": "modify-configuration",
+    "version": "1.0.0",
+    "lifecycle": "shared",
+    "allowed_actions": ["change"],
+    "validators": ["requested-files-exist"],
+    "evidence_required": ["file-inspection", "test-results"]
+  }
+]

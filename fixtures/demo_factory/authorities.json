@@ -1,0 +1,9 @@
+[
+  {
+    "actor": "demo-builder",
+    "allowed_actions": ["change"],
+    "allowed_paths": ["**"],
+    "environments": ["local"],
+    "expires_at": "2099-12-31T23:59:59Z"
+  }
+]

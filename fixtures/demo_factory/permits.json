@@ -1,0 +1,47 @@
+[
+  {
+    "permit_id": "permit-safe-001",
+    "request_id": "demo-safe-001",
+    "capability": "modify-configuration",
+    "actor": "demo-builder",
+    "allowed_actions": ["change"],
+    "allowed_paths": ["src/config/**", "tests/**", "docs/**"],
+    "forbidden_actions": [],
+    "environment": "local",
+    "validators": ["python-unit-tests", "requested-files-exist"],
+    "evidence_required": ["file-inspection", "test-results"],
+    "expires_at": "2099-12-31T23:59:59Z",
+    "rollback": "Revert the named configuration files.",
+    "status": "ACTIVE"
+  },
+  {
+    "permit_id": "permit-deny-001",
+    "request_id": "demo-deny-001",
+    "capability": "modify-configuration",
+    "actor": "demo-builder",
+    "allowed_actions": ["change"],
+    "allowed_paths": ["docs/**"],
+    "forbidden_actions": [],
+    "environment": "local",
+    "validators": ["python-unit-tests", "requested-files-exist"],
+    "evidence_required": ["file-inspection", "test-results"],
+    "expires_at": "2099-12-31T23:59:59Z",
+    "rollback": "Revert the named documentation files.",
+    "status": "ACTIVE"
+  },
+  {
+    "permit_id": "permit-escalate-001",
+    "request_id": "demo-escalate-001",
+    "capability": "modify-configuration",
+    "actor": "demo-builder",
+    "allowed_actions": ["change"],
+    "allowed_paths": ["src/config/**", "tests/**", "docs/**"],
+    "forbidden_actions": [],
+    "environment": "local",
+    "validators": ["python-unit-tests", "requested-files-exist"],
+    "evidence_required": ["file-inspection", "test-results"],
+    "expires_at": "2099-12-31T23:59:59Z",
+    "rollback": "Remove the proposed persistence adapter.",
+    "status": "ACTIVE"
+  }
+]

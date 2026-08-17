@@ -1,0 +1,14 @@
+{
+  "id": "demo-deny-001",
+  "project": "demo-config-service",
+  "objective": "Modify the production deployment from a documentation-only permit.",
+  "actor": "demo-builder",
+  "capability": "modify-configuration",
+  "action": "change",
+  "requested_scope": ["docs/**", "infrastructure/production/**"],
+  "files": ["infrastructure/production/main.tf"],
+  "effects": ["production-infrastructure"],
+  "environment": "local",
+  "risk_level": "CRITICAL",
+  "expected_evidence": ["file-inspection", "test-results"]
+}

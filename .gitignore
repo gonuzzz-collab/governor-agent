@@ -4,6 +4,7 @@
 __pycache__/
 *.py[cod]
 .venv/
+.governor/
 node_modules/
 target/
 dist/

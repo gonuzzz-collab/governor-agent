@@ -1,0 +1,14 @@
+{
+  "id": "demo-escalate-001",
+  "project": "demo-config-service",
+  "objective": "Add a second persistent store for the governed configuration value.",
+  "actor": "demo-builder",
+  "capability": "modify-configuration",
+  "action": "change",
+  "requested_scope": ["src/config/**", "tests/**"],
+  "files": ["src/config/replica_store.py", "tests/test_service.py"],
+  "effects": ["introduces-persistence-source"],
+  "environment": "local",
+  "risk_level": "HIGH",
+  "expected_evidence": ["file-inspection", "test-results"]
+}
