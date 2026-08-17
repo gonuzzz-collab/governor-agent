@@ -10,8 +10,9 @@ No repository was published and no remote was changed during this review.
 ## Scope
 
 The review covered the tracked worktree and the complete independent Governor Git history through
-commit `da4f025`. No tracked file has been deleted in that history, so the current-file content scan
-also covers every historical path.
+the pre-audit baseline `da4f025`. The resulting audit-only documentation and public-script message
+changes were rescanned before commit. No tracked file was deleted during either interval, so the
+current-file content scan covers every historical path reviewed.
 
 ## Automated observations
 
