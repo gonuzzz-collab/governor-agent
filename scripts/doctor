@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -uo pipefail
+
+if (( $# != 0 )); then
+  echo "Uso: scripts/doctor" >&2
+  exit 2
+fi
+
+status=0
+echo "# GoNucleo Project Doctor"
+echo "- Modo: report-only"
+echo "- Escrituras realizadas: no"
+echo "- Stack: python"
+for tool in python3; do
+  if command -v "${tool}" >/dev/null 2>&1; then
+    echo "- [OK] ${tool}"
+  else
+    echo "- [FAIL] ${tool} no disponible"
+    status=1
+  fi
+done
+exit "${status}"

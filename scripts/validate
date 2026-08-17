@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (( $# != 0 )); then
+  echo "Uso: scripts/validate" >&2
+  exit 2
+fi
+
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_ROOT="$(cd "${PROJECT_DIR}/../.." && pwd)"
+
+"${REPO_ROOT}/.skills/factory-check" --project "${PROJECT_DIR}" --strict
+"${PROJECT_DIR}/scripts/test"

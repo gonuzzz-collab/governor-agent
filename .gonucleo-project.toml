@@ -1,0 +1,17 @@
+schema_version = 1
+name = "Governor Agent"
+slug = "governor-agent"
+purpose = "Govern AI-assisted software changes through explicit authority, policies, permits, validators, evidence, and human escalation."
+maturity = "experiment"
+owner = "GoNucleo"
+stack = "python"
+data_classification = "internal"
+deployment = "local"
+features = ["ai"]
+created_by = "project-golden-path"
+
+[automation]
+validate = "scripts/validate"
+doctor = "scripts/doctor"
+test = "scripts/test"
+evidence = "scripts/evidence"
