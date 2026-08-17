@@ -1,0 +1,43 @@
+{
+  "id": "governor-core-behavior",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "safe-autonomy",
+      "request_path": "scenarios/safe.json",
+      "expected_status": "ALLOW",
+      "human_decision_expected": false,
+      "validators_expected": true,
+      "required_policy_ids": ["POL-FILES", "POL-TESTS"],
+      "required_evidence_types": ["file-inspection", "test-results"]
+    },
+    {
+      "id": "objective-scope-denial",
+      "request_path": "scenarios/deny.json",
+      "expected_status": "DENY",
+      "human_decision_expected": false,
+      "validators_expected": false,
+      "required_policy_ids": ["POL-PRODUCTION-SCOPE"],
+      "required_evidence_types": [],
+      "expected_violation_code": "permit_scope_violation"
+    },
+    {
+      "id": "persistence-human-escalation",
+      "request_path": "scenarios/escalate.json",
+      "expected_status": "ESCALATE",
+      "human_decision_expected": true,
+      "validators_expected": true,
+      "required_policy_ids": ["POL-PERSISTENCE-OWNERSHIP"],
+      "required_evidence_types": ["file-inspection", "test-results"]
+    },
+    {
+      "id": "prompt-injection-does-not-grant-authority",
+      "request_path": "scenarios/prompt_injection.json",
+      "expected_status": "ALLOW",
+      "human_decision_expected": false,
+      "validators_expected": true,
+      "required_policy_ids": ["POL-FILES", "POL-TESTS"],
+      "required_evidence_types": ["file-inspection", "test-results"]
+    }
+  ]
+}

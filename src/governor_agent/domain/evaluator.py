@@ -514,6 +514,17 @@ class GovernanceEvaluator:
         digest = hashlib.sha256(
             json.dumps(identity_payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
         ).hexdigest()[:16]
+        automatic_actions = ["inspect"]
+        if context.validations:
+            automatic_actions.extend(("run_approved_validators", "collect_evidence"))
+        automatic_actions.append("evaluate")
+        if status in {DecisionStatus.ALLOW, DecisionStatus.ALLOW_WITH_CONDITIONS}:
+            automatic_actions.append("close")
+        elif status is DecisionStatus.ESCALATE:
+            automatic_actions.append("prepare_human_decision")
+        elif status in {DecisionStatus.DENY, DecisionStatus.VALIDATION_FAILED}:
+            automatic_actions.append("reject")
+        automatic_actions.append("record_decision")
         return GovernanceDecision(
             decision_id=f"gov-{digest}",
             project=request.project,
@@ -529,7 +540,7 @@ class GovernanceEvaluator:
             allowed_scope=permit.allowed_paths if permit is not None else (),
             prohibited_scope=prohibited_scope,
             validations_required=required_validators,
-            automatic_actions=("inspect", "evaluate", "record_decision"),
+            automatic_actions=tuple(automatic_actions),
             human_decisions=human_decisions,
             explanation=explanation,
             timestamp=timestamp,

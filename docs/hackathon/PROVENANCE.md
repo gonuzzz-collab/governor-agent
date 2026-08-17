@@ -59,8 +59,8 @@ Additional dependencies must be added only when implemented and recorded with ex
 | Phase 0 audit and architecture boundary | Governor repository | 2026-08-17 | Initial commit `9a4bdcf` | New hackathon work |
 | Deterministic governance domain | Governor repository | 2026-08-17 | Commit `5d28337` | New hackathon work |
 | Synthetic factory, validators, audit trail and CLI demos | Governor repository | 2026-08-17 | Commit `b5e0460` | New hackathon work |
-| Strands agent, custom tools and offline model double | Governor repository | 2026-08-17 | This increment's next commit | New hackathon work |
-| Agent evaluation harness | Governor repository | Not yet implemented | Future commits only | Planned |
+| Strands agent, custom tools and offline model double | Governor repository | 2026-08-17 | Commit `ca1559a` | New hackathon work |
+| Agent evaluation harness and audit verification | Governor repository | 2026-08-17 | This increment's next commit | New hackathon work |
 
 ## UNCERTAIN OR NEEDS REVIEW
 

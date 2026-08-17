@@ -89,3 +89,72 @@ class CliScenarioTest(unittest.TestCase):
             error_text = error.getvalue()
         self.assertEqual(code, 2)
         self.assertIn("--allow-paid-inference", error_text)
+
+    def test_agent_evaluation_cli_reports_metrics(self) -> None:
+        with tempfile.TemporaryDirectory() as directory, io.StringIO() as output:
+            with contextlib.redirect_stdout(output):
+                code = main(
+                    [
+                        "eval-agent",
+                        "--factory",
+                        str(FACTORY),
+                        "--suite",
+                        str(ROOT / "evals" / "core_suite.json"),
+                        "--audit-dir",
+                        directory,
+                    ]
+                )
+            text = output.getvalue()
+        self.assertEqual(code, 0)
+        self.assertIn("Cases passed: 4/4", text)
+        self.assertIn("False allow rate: 0.000", text)
+
+    def test_verify_audit_cli_confirms_digest(self) -> None:
+        with tempfile.TemporaryDirectory() as directory, io.StringIO() as output:
+            audit_dir = Path(directory) / "audit"
+            with contextlib.redirect_stdout(output):
+                self.assertEqual(
+                    main(
+                        [
+                            "demo",
+                            "safe",
+                            "--factory",
+                            str(FACTORY),
+                            "--audit-dir",
+                            str(audit_dir),
+                        ]
+                    ),
+                    0,
+                )
+                record = next((audit_dir / "runs").glob("*.json"))
+                code = main(
+                    [
+                        "verify-audit",
+                        str(record),
+                        "--audit-dir",
+                        str(audit_dir),
+                    ]
+                )
+            text = output.getvalue()
+        self.assertEqual(code, 0)
+        self.assertIn("Audit integrity: VERIFIED", text)
+
+    def test_debug_mode_exposes_ids_without_raw_validator_output(self) -> None:
+        with tempfile.TemporaryDirectory() as directory, io.StringIO() as output:
+            with contextlib.redirect_stdout(output):
+                code = main(
+                    [
+                        "--debug",
+                        "agent-demo",
+                        "safe",
+                        "--factory",
+                        str(FACTORY),
+                        "--audit-dir",
+                        directory,
+                    ]
+                )
+            text = output.getvalue()
+        self.assertEqual(code, 0)
+        self.assertIn("Decision ID: gov-", text)
+        self.assertIn("Evidence IDs:", text)
+        self.assertNotIn("test_normalize_key", text)

@@ -31,19 +31,25 @@ class SyntheticWorkflowTest(unittest.TestCase):
         result = self.workflow.evaluate(load_request("safe"))
         self.assertEqual(result.decision.status, DecisionStatus.ALLOW)
         self.assertEqual({item.status for item in result.validations}, {ValidationStatus.PASS})
+        self.assertIn("run_approved_validators", result.decision.automatic_actions)
+        self.assertIn("close", result.decision.automatic_actions)
         self.assertTrue(result.audit_path.is_file())
+        verified = AuditStore(Path(self.temporary.name)).verify(result.audit_path)
+        self.assertEqual(verified.run_id, result.audit_record.run_id)
 
     def test_scope_violation_is_denied_without_running_validators(self) -> None:
         result = self.workflow.evaluate(load_request("deny"))
         self.assertEqual(result.decision.status, DecisionStatus.DENY)
         self.assertEqual(result.validations, ())
         self.assertEqual(result.decision.violations[0].code, "permit_scope_violation")
+        self.assertIn("reject", result.decision.automatic_actions)
 
     def test_ownership_ambiguity_escalates_after_technical_pass(self) -> None:
         result = self.workflow.evaluate(load_request("escalate"))
         self.assertEqual(result.decision.status, DecisionStatus.ESCALATE)
         self.assertEqual({item.status for item in result.validations}, {ValidationStatus.PASS})
         self.assertEqual(len(result.decision.human_decisions), 1)
+        self.assertIn("prepare_human_decision", result.decision.automatic_actions)
 
     def test_repeated_run_appends_instead_of_overwriting(self) -> None:
         first = self.workflow.evaluate(load_request("safe"))

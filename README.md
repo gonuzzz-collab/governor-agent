@@ -51,6 +51,14 @@ This offline command uses Strands `Agent`, custom tools, hooks, and structured o
 network access or paid inference. `governor demo all` remains available to exercise only the
 deterministic layer.
 
+Measure the agent against the versioned behavior suite:
+
+    .venv/bin/governor eval-agent
+
+Verify one append-only decision record:
+
+    .venv/bin/governor verify-audit .governor/runs/<run-id>.json
+
 Evaluate one structured request and emit automation-friendly JSON:
 
     .venv/bin/governor evaluate \
@@ -61,6 +69,10 @@ Evaluate one structured request and emit automation-friendly JSON:
 Individual scenario exit codes are `0` for allowed work, `3` for human escalation, `4` for denial,
 `5` for incomplete evidence, `6` for validation failure, and `2` for invalid input. `demo all`
 returns zero only when all three outcomes match their declared demonstration contract.
+
+Use `--verbose` before the subcommand for validator and Strands tool names. Use `--debug` for safe
+policy, evidence, decision, and digest identifiers; raw repository and validator output remains
+excluded. Use `--format json` for structured automation output.
 
 ## Validar
 
@@ -95,6 +107,9 @@ longer required; source recovery remains Git-based.
 Governor is new hackathon-period work. GoNucleo and Living Memory are pre-existing context and are
 not copied into this repository. See [PROVENANCE.md](docs/hackathon/PROVENANCE.md).
 
+See [Local demo](docs/demo/LOCAL_DEMO.md) and [Agent evaluations](docs/testing/EVALUATIONS.md) for
+reproducible evidence.
+
 ## License
 
 Apache-2.0. Third-party dependencies retain their own licenses.
@@ -106,6 +121,7 @@ Apache-2.0. Third-party dependencies retain their own licenses.
   real Strands `Agent` tool loop with structured output and tool hooks.
 - Implemented but not remotely demonstrated: injected Amazon Bedrock provider. The CLI requires
   `--allow-paid-inference` before it can make a Bedrock call.
-- Next: agent evaluations, additional security hardening, decision/evidence integrity checks, and
-  a read-only private factory adapter.
+- Implemented and demonstrated hardening: versioned agent evaluations, audit digest verification,
+  tamper detection, and safe normal/verbose/debug output.
+- Next: additional failure-recovery tests and a read-only private factory adapter.
 - Planned: optional AgentCore assessment only after the local MVP is hardened.

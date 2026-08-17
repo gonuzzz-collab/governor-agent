@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
 import os
 import tempfile
@@ -10,9 +11,15 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from governor_agent.domain import ChangeRequest, GovernanceDecision, ValidationResult
+
+MAX_AUDIT_RECORD_BYTES = 5_000_000
+
+
+class AuditIntegrityError(RuntimeError):
+    """Raised when an audit record is malformed, out of scope, or has been altered."""
 
 
 class AuditRecord(BaseModel):
@@ -47,10 +54,10 @@ class AuditStore:
             "decision": decision.model_dump(mode="json"),
             "validations": [item.model_dump(mode="json") for item in validations],
         }
-        digest = hashlib.sha256(
-            json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
-        ).hexdigest()
-        record = AuditRecord.model_validate({**payload, "record_digest": f"sha256:{digest}"})
+        unsigned = AuditRecord.model_validate({**payload, "record_digest": f"sha256:{'0' * 64}"})
+        record = unsigned.model_copy(
+            update={"record_digest": f"sha256:{self._record_digest(unsigned)}"}
+        )
 
         directory = self._root / "runs"
         directory.mkdir(parents=True, exist_ok=True)
@@ -66,3 +73,35 @@ class AuditStore:
         finally:
             Path(temporary_name).unlink(missing_ok=True)
         return record, destination
+
+    def verify(self, path: Path) -> AuditRecord:
+        """Load and verify a record confined to this store's runs directory."""
+
+        if path.is_symlink():
+            raise AuditIntegrityError("audit record must not be a symlink")
+        runs_root = (self._root / "runs").resolve(strict=True)
+        try:
+            resolved = path.resolve(strict=True)
+            resolved.relative_to(runs_root)
+        except (FileNotFoundError, ValueError) as exc:
+            raise AuditIntegrityError("audit record is missing or outside the audit store") from exc
+        if not resolved.is_file():
+            raise AuditIntegrityError("audit record is not a file")
+        if resolved.stat().st_size > MAX_AUDIT_RECORD_BYTES:
+            raise AuditIntegrityError("audit record exceeds size limit")
+        try:
+            with resolved.open("r", encoding="utf-8") as stream:
+                record = AuditRecord.model_validate(json.load(stream))
+        except (OSError, UnicodeError, json.JSONDecodeError, ValidationError) as exc:
+            raise AuditIntegrityError(f"invalid audit record: {exc}") from exc
+        expected = f"sha256:{self._record_digest(record)}"
+        if not hmac.compare_digest(record.record_digest, expected):
+            raise AuditIntegrityError("audit record digest mismatch")
+        return record
+
+    @staticmethod
+    def _record_digest(record: AuditRecord) -> str:
+        payload = record.model_dump(mode="json", exclude={"record_digest"})
+        return hashlib.sha256(
+            json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()

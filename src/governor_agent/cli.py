@@ -12,8 +12,13 @@ from pydantic import ValidationError
 from governor_agent.adapters import GovernanceSourceError, SyntheticFactoryAdapter
 from governor_agent.agent import AgentConsistencyError, AgentRunResult, GovernorAgentRunner
 from governor_agent.agent.provider import create_bedrock_model
-from governor_agent.audit import AuditStore
+from governor_agent.audit import AuditIntegrityError, AuditStore
 from governor_agent.domain import ChangeRequest, DecisionStatus
+from governor_agent.evaluation import (
+    AgentEvaluationRunner,
+    EvaluationSourceError,
+    EvaluationStore,
+)
 from governor_agent.workflow import GovernorWorkflow, WorkflowResult
 
 EXIT_CODES = {
@@ -41,6 +46,11 @@ def _parser() -> argparse.ArgumentParser:
         description="Govern AI-assisted software changes using explicit authority and evidence.",
     )
     parser.add_argument("--verbose", action="store_true", help="Show validator details.")
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Show safe governance trace IDs without raw repository or validator content.",
+    )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     evaluate = subparsers.add_parser("evaluate", help="Evaluate a structured change request.")
@@ -78,6 +88,27 @@ def _parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Required acknowledgement before invoking Amazon Bedrock.",
     )
+
+    evaluation = subparsers.add_parser(
+        "eval-agent", help="Measure offline Governor agent behavior against a scenario suite."
+    )
+    evaluation.add_argument(
+        "--factory",
+        type=Path,
+        default=_repo_root() / "fixtures" / "demo_factory",
+    )
+    evaluation.add_argument(
+        "--suite",
+        type=Path,
+        default=_repo_root() / "evals" / "core_suite.json",
+    )
+    evaluation.add_argument("--audit-dir", type=Path, default=Path(".governor"))
+    evaluation.add_argument("--format", choices=("text", "json"), default="text")
+
+    verify = subparsers.add_parser("verify-audit", help="Verify one persisted audit record.")
+    verify.add_argument("record", type=Path)
+    verify.add_argument("--audit-dir", type=Path, default=Path(".governor"))
+    verify.add_argument("--format", choices=("text", "json"), default="text")
     return parser
 
 
@@ -124,7 +155,13 @@ def _record_label(result: WorkflowResult, audit_dir: Path) -> str:
         return result.audit_path.name
 
 
-def _render_text(result: WorkflowResult, audit_dir: Path, *, verbose: bool) -> None:
+def _render_text(
+    result: WorkflowResult,
+    audit_dir: Path,
+    *,
+    verbose: bool,
+    debug: bool = False,
+) -> None:
     decision = result.decision
     print(f"Governor decision: {decision.status.value}")
     print(f"Request: {decision.request_id}")
@@ -145,6 +182,13 @@ def _render_text(result: WorkflowResult, audit_dir: Path, *, verbose: bool) -> N
         print("Approved validators:")
         for validation in result.validations:
             print(f"  - {validation.validator_id}: {validation.status.value}")
+    if debug:
+        print(f"Decision ID: {decision.decision_id}")
+        print(f"Policies: {', '.join(decision.policies_applied) or 'none'}")
+        print(
+            "Evidence IDs: " + (", ".join(item.evidence_id for item in decision.evidence) or "none")
+        )
+        print(f"Record digest: {result.audit_record.record_digest}")
     print(f"Audit record: {_record_label(result, audit_dir)}")
 
 
@@ -166,6 +210,7 @@ def _render_scenarios(
     *,
     output_format: str,
     verbose: bool,
+    debug: bool,
 ) -> None:
     if output_format == "json":
         payload = []
@@ -181,7 +226,7 @@ def _render_scenarios(
     for scenario, workflow, agent_result in results:
         if len(results) > 1:
             print(f"\n=== {scenario.upper()} ===")
-        _render_text(workflow, audit_dir, verbose=verbose)
+        _render_text(workflow, audit_dir, verbose=verbose or debug, debug=debug)
         if verbose and agent_result is not None:
             print("Strands tool loop:")
             for name in agent_result.tool_trace:
@@ -191,10 +236,49 @@ def _render_scenarios(
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
+        if args.command == "verify-audit":
+            record = AuditStore(args.audit_dir).verify(args.record)
+            if args.format == "json":
+                print(json.dumps(record.model_dump(mode="json"), indent=2, sort_keys=True))
+            else:
+                print("Audit integrity: VERIFIED")
+                print(f"Run: {record.run_id}")
+                print(f"Decision: {record.decision.decision_id} ({record.decision.status.value})")
+                print(f"Digest: {record.record_digest}")
+            return 0
+
+        if args.command == "eval-agent":
+            report = AgentEvaluationRunner(args.factory, args.audit_dir / "eval-runs").run(
+                args.suite
+            )
+            report_path = EvaluationStore(args.audit_dir).record(report)
+            if args.format == "json":
+                print(json.dumps(report.model_dump(mode="json"), indent=2, sort_keys=True))
+            else:
+                metrics = report.metrics
+                print(f"Evaluation: {report.suite_id}@{report.suite_version}")
+                print(f"Cases passed: {metrics.passed_cases}/{metrics.total_cases}")
+                print(f"Decision accuracy: {metrics.decision_accuracy:.3f}")
+                print(f"Tool selection accuracy: {metrics.tool_selection_accuracy:.3f}")
+                print(f"Policy grounding: {metrics.policy_grounding_rate:.3f}")
+                print(f"Evidence completeness: {metrics.evidence_completeness_rate:.3f}")
+                print(f"False allow rate: {metrics.false_allow_rate:.3f}")
+                print(f"False deny rate: {metrics.false_deny_rate:.3f}")
+                print(
+                    "Unnecessary human interruption rate: "
+                    f"{metrics.unnecessary_human_interruption_rate:.3f}"
+                )
+                try:
+                    label = report_path.relative_to(args.audit_dir.resolve()).as_posix()
+                except ValueError:
+                    label = report_path.name
+                print(f"Evaluation record: {label}")
+            return 0 if report.metrics.passed_cases == report.metrics.total_cases else 8
+
         if args.command == "evaluate":
             result = _run(args.factory, args.audit_dir, args.request)
             _render_json(result, args.audit_dir) if args.format == "json" else _render_text(
-                result, args.audit_dir, verbose=args.verbose
+                result, args.audit_dir, verbose=args.verbose or args.debug, debug=args.debug
             )
             return EXIT_CODES[result.decision.status]
 
@@ -224,10 +308,14 @@ def main(argv: list[str] | None = None) -> int:
             args.audit_dir,
             output_format=args.format,
             verbose=args.verbose,
+            debug=args.debug,
         )
         if len(scenarios) > 1:
             return 1 if unexpected else 0
         return EXIT_CODES[results[0][1].decision.status]
+    except AuditIntegrityError as exc:
+        print(f"Governor audit integrity error: {exc}", file=sys.stderr)
+        return 7
     except (
         OSError,
         ValueError,
@@ -235,6 +323,7 @@ def main(argv: list[str] | None = None) -> int:
         ValidationError,
         GovernanceSourceError,
         AgentConsistencyError,
+        EvaluationSourceError,
     ) as exc:
         print(f"Governor input error: {exc}", file=sys.stderr)
         return 2

@@ -44,7 +44,7 @@ PROVENANCE.md instead of being presented as Governor progress.
 
 ## 2026-08-17 - Strands Governor agent loop
 
-- Commit: pending this increment's commit.
+- Commit: `ca1559a` (`feat: add Strands governor agent`).
 - Goal: make Strands central and non-ornamental without granting the model governance authority.
 - Result: one Strands `Agent`, three purpose-built custom tools, current structured-output API,
   typed tool hooks, deterministic offline model double, verified agent/domain consistency, Bedrock
@@ -56,3 +56,18 @@ PROVENANCE.md instead of being presented as Governor progress.
   production intelligence. Bedrock remains uncalled and unproven until human authorization.
 - Contest relevance: Strands now performs the actual inspection/evaluation tool loop and produces
   schema-validated output while hard governance remains deterministic.
+
+## 2026-08-17 - Agent evaluations and audit integrity
+
+- Commit: pending this increment's commit.
+- Goal: make behavior and persisted evidence independently inspectable.
+- Result: versioned four-case evaluation suite, ten aggregate safe-autonomy metrics, append-only
+  evaluation reports, canonical audit digest verification, tamper and symlink rejection, accurate
+  automatic-action records, and safe debug output implemented.
+- Tests: 45 tests passed; evaluation baseline 4/4; decision/tool/policy/evidence metrics 1.000;
+  false allow, false deny, hallucinated policy, and unnecessary interruption rates 0.000; tampered
+  audit record rejected.
+- Important decision: offline evaluation results are explicitly fixture-scoped and do not claim
+  Bedrock production performance.
+- Contest relevance: provides repeatable evidence for technical implementation, safe autonomy, and
+  presentation without hiding model or fixture limitations.
