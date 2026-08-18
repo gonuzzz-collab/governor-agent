@@ -66,7 +66,7 @@ Additional dependencies must be added only when implemented and recorded with ex
 | Submission drafts and clean-clone evidence | Governor repository | 2026-08-17 | Commit `ed1c142` | New hackathon work |
 | Private Codex advisory intelligence boundary and spike | Governor repository | 2026-08-17 | Commit `1431d27` | New hackathon work; no Codex source or private authentication material incorporated |
 | Sanitized evidence contracts and deterministic external policy | Governor repository | 2026-08-17 | Commits `e3827b7`, `474fbe6` | New hackathon work; independently implemented |
-| Read-only real-factory evidence adapter and privacy scenarios | Governor repository | 2026-08-17 | Commits `4446aa0`, `dfb8e83` | New hackathon work; no private factory content incorporated |
+| Read-only real-factory evidence adapter and privacy scenarios | Governor repository | 2026-08-17 | Commits `4446aa0`, `dfb8e83`, `3ed74b1` | New hackathon work; no private factory content incorporated |
 
 ## UNCERTAIN OR NEEDS REVIEW
 

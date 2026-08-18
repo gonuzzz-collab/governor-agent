@@ -203,7 +203,7 @@ PROVENANCE.md instead of being presented as Governor progress.
 
 - Commits: `e3827b7` typed evidence/privacy contracts; `474fbe6` sanitized-only intelligence
   enforcement; `4446aa0` read-only real-factory evidence adapter; `dfb8e83` adversarial privacy
-  scenarios; documentation commit pending at the time of this entry.
+  scenarios; `3ed74b1` privacy model, ADR, source map, and readiness documentation.
 - Goal: consume useful real factory evidence without granting Governor, Strands, or Codex broad
   repository access and without turning privacy into a prompt convention.
 - Contracts: separate local `RawEvidence` and external-safe `SanitizedEvidence`; explicit
@@ -224,8 +224,12 @@ PROVENANCE.md instead of being presented as Governor progress.
   profile received only the sanitized object and returned evidence-backed architectural risks under
   `ADVISORY_ONLY`. Two earlier sandboxed attempts failed before inference because network was
   unavailable; raw stderr remained suppressed.
-- Tests: the final offline gate passed 84 tests in 0.843 seconds: 83 passed and the authenticated
+- Tests: the final offline gate passed 84 tests in 0.846 seconds: 83 passed and the authenticated
   Codex integration was skipped as designed. Factory baseline, Ruff, formatting, project doctor,
   and all original 52 tests passed.
 - External services: no Bedrock, AWS credentials, API-key billing, AgentCore, deployment,
   publication, or push. One successful call consumed local ChatGPT/Codex quota.
+- Closure tooling limitation: the generic runtime-reality wrapper resolved the parent monorepo even
+  though Governor has no deployed runtime change and refreshed one ignored frontend build directory
+  outside Governor. No new tracked factory diff was detected. Cleanup was deliberately not attempted
+  because deleting a pre-existing ignored artifact would be destructive and outside this permit.
