@@ -23,10 +23,14 @@ Last reviewed: 2026-08-17
 | R-16 | Public testing needs private credentials | Medium | High | Free local synthetic path with no credentials | Architecture control |
 | R-17 | License or ownership blocks publication | Low for new code | Critical | Apache-2.0, no vendored work, dependency metadata audit, final human IP review | Engineering audit passed; human acceptance open |
 | R-18 | Inference is presented as fact | Medium | High | Typed evidence kinds and exact model/domain consistency check | Controlled for MVP |
-| R-20 | Private evidence is over-shared with Codex | Medium | Critical | Fixed typed request, synthetic spike, no repository access, evidence minimization, explicit future privacy gate | Controlled for spike; real-factory contract blocked |
+| R-20 | Private evidence is over-shared with Codex | Medium | Critical | Sanitized-only typed request, fixed source adapter, deterministic external policy, evidence minimization, audit | Controlled for implemented aggregate observation |
 | R-21 | Codex CLI behavior or flags drift | Medium | High | Record tested version, strict config, fake command-contract tests, opt-in local compatibility test | Controlled for current version |
 | R-22 | Codex MCP notifications do not interoperate with the locked Strands/MCP client | Medium | Medium | Keep MCP deferred and use stable `codex exec`; require passing compatibility matrix before adoption | Open and non-blocking |
 | R-23 | Private Codex quota or service availability interrupts Governor intelligence | Medium | Medium | Advisory-only fail-closed provider, explicit quota acknowledgement, deterministic governance remains offline-capable | Controlled by separation |
+| R-24 | Secret detection misses encoded or novel credentials | Medium | Critical | Critical-pattern detector, explicit classification, fixed adapters, no raw provider input, fail-closed review gate | Residual; detector is not complete DLP |
+| R-25 | Stable aliases are mistaken for irreversible anonymization | Medium | High | Document pseudonymization limit; never treat a SECRET alias as exposure permission | Controlled and documented |
+| R-26 | Descriptive factory prose is promoted into policy | Medium | Critical | Independent source role and trust; policy kind requires authorized normative provenance | Controlled by schema/tests |
+| R-27 | Real source contracts drift without adapter review | Medium | High | Fixed allowlist, format/readiness inventory, schema checks, synthetic contracts, opt-in real observation | Residual; revalidate before expansion |
 
 ## Stop conditions
 

@@ -64,7 +64,9 @@ Additional dependencies must be added only when implemented and recorded with ex
 | Agent evaluation harness and audit verification | Governor repository | 2026-08-17 | Commit `f76751f` | New hackathon work |
 | Privacy-preserving real-factory inventory adapter | Governor repository | 2026-08-17 | Commit `99ff87d` | New hackathon work; no private content copied |
 | Submission drafts and clean-clone evidence | Governor repository | 2026-08-17 | Commit `ed1c142` | New hackathon work |
-| Private Codex advisory intelligence boundary and spike | Governor repository | 2026-08-17 | Uncommitted working tree; commit pending human authorization | New hackathon work; no Codex source or private authentication material incorporated |
+| Private Codex advisory intelligence boundary and spike | Governor repository | 2026-08-17 | Commit `1431d27` | New hackathon work; no Codex source or private authentication material incorporated |
+| Sanitized evidence contracts and deterministic external policy | Governor repository | 2026-08-17 | Commits `e3827b7`, `474fbe6` | New hackathon work; independently implemented |
+| Read-only real-factory evidence adapter and privacy scenarios | Governor repository | 2026-08-17 | Commits `4446aa0`, `dfb8e83` | New hackathon work; no private factory content incorporated |
 
 ## UNCERTAIN OR NEEDS REVIEW
 

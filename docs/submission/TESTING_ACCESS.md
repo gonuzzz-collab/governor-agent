@@ -26,6 +26,10 @@ This command runs locked Ruff checks and all deterministic, integration, securit
 Strands, and agent-evaluation tests. Codex behavior is represented by fakes; the authenticated local
 integration test is skipped. The gate needs neither AWS credentials nor a ChatGPT account.
 
+Evidence-privacy and real-adapter tests create only temporary synthetic factories. They verify
+classification, minimization, secrets, path confinement, audit redaction, and the sanitized-only
+provider boundary without reading any private repository.
+
 ## Demonstrate
 
 ```bash

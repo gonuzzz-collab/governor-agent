@@ -9,7 +9,8 @@ This spike demonstrates:
 Governor -> Strands custom tool -> codex exec -> structured architectural-risk report
 ```
 
-It does not evaluate a real repository, alter a governance decision, call Bedrock, use an OpenAI
+Its request now contains a synthetic `SanitizedEvidence` instance rather than free-form evidence
+strings. It does not evaluate a real repository, alter a governance decision, call Bedrock, use an OpenAI
 API key, or belong in the default test suite.
 
 ## Prerequisites
@@ -70,6 +71,10 @@ errors. Evidence is labeled untrusted.
 The model request still leaves the machine for Codex service processing. Supply only the minimum
 sanitized evidence required for the question. Never include secrets, credentials, raw private
 factory content, or a private repository path.
+
+The real-factory command applies the same provider boundary after local extraction and
+sanitization. It will not start Codex when evidence is classified SECRET or external processing is
+otherwise blocked.
 
 ## Tests
 

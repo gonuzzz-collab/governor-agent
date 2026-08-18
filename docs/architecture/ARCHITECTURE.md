@@ -1,12 +1,17 @@
 # Governor Architecture
 
-Status: local Strands MVP implemented and demonstrated offline; experimental private Codex
-advisory boundary implemented and demonstrated opt-in.
+Status: local Strands MVP implemented and demonstrated offline; private Codex advisory and
+sanitized real-factory evidence boundaries implemented and demonstrated opt-in/read-only.
 
 ```mermaid
 flowchart TD
     H[Human intent and authority] --> R[Structured change request]
     B[Builder change] --> R
+    RF[Real factory fixed sources] --> RE[RawEvidence / local only]
+    RE --> CL[Classification + secret detection]
+    CL --> SZ[Minimization + sanitization]
+    SZ --> SE[SanitizedEvidence]
+    SE --> R
     R --> A[Governor Agent / Strands]
     A --> T[Purpose-built inspection tools]
     A --> I[Intelligence boundary]
@@ -93,3 +98,23 @@ of both frameworks and avoids translating one agent protocol into another model-
 
 No default test or demo requires Codex, ChatGPT authentication, AWS credentials, network access, or
 paid inference. See [ADR-003](ADR-003-private-codex-intelligence.md).
+
+## Sanitized evidence boundary
+
+Real-factory access is mediated by `FactoryEvidenceSource`. The implemented adapter reads only a
+fixed allowlist of machine-readable metadata and known contract entrypoints. It emits local
+`RawEvidence`; it never passes a path or file handle to Strands or Codex.
+
+`EvidenceSanitizer` applies deterministic classification, secret detection, minimization, logical
+path conversion, stable aliases, and redaction. `ExternalIntelligencePolicy` then decides whether
+the resulting `SanitizedEvidence` may leave the machine. `SECRET` always blocks. `CONFIDENTIAL`
+permits structural metadata only. The model has no role in this policy.
+
+The real observation runner keeps a separate append-only evidence audit containing the sanitized
+payload and transformation metadata but no raw values. Audit storage inside the real factory is
+rejected. The current real source set remains incomplete for a full `GovernanceSource`, so the
+runner returns `INCOMPLETE_EVIDENCE` and no authoritative change decision.
+
+See [ADR-004](ADR-004-sanitized-evidence-boundary.md), the
+[privacy model](../security/EVIDENCE_PRIVACY_MODEL.md), and the
+[real source map](REAL_FACTORY_ADAPTER.md).

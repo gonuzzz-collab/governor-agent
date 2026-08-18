@@ -47,3 +47,16 @@ env \
 It uses only the fixed synthetic risk-analysis request. Public CI must not set these variables or
 depend on a contributor's ChatGPT account. A skipped local integration test is the expected default
 result.
+
+## Evidence privacy evaluations
+
+The default offline suite exercises all four classifications, deterministic external-processing
+actions, personal and absolute path removal, stable aliases, code/free-text minimization, critical
+secret patterns, explicit SECRET blocking, descriptive-versus-normative provenance, prompt
+injection as untrusted data, raw-versus-sanitized type enforcement, provider pre-start rejection,
+source traversal/symlink rejection, audit integrity, audit redaction, and read-only factory
+extraction.
+
+Real-factory integration tests use a synthetic temporary factory. Public CI does not read a private
+factory. The real observation and opt-in Codex demonstration are operational evidence, not a CI
+dependency or a committed fixture.

@@ -67,7 +67,8 @@ the repository.
 
 Use `codex exec` as the first private advisory intelligence adapter. Governor binds a typed,
 minimal `IntelligenceRequest` to a no-argument Strands custom tool. Codex receives only the fixed
-objective, scope, and evidence selected by Governor. Its output is a typed architectural-risk
+objective, scope, and validated `SanitizedEvidence` selected by Governor; raw strings, mappings,
+files, paths, and policy-blocked evidence are rejected before process startup. Its output is a typed architectural-risk
 report with no governance-decision field. Governor adds the `ADVISORY_ONLY` authority label itself.
 
 This slice is experimental and deliberately separate from the authoritative evaluation workflow.
@@ -134,6 +135,9 @@ Codex may identify and explain risks supported by supplied evidence. It cannot:
 - override a deterministic Governor decision.
 
 Any output that violates the schema, including a governance `status` field, fails closed.
+
+The later [Sanitized Evidence Boundary decision](ADR-004-sanitized-evidence-boundary.md) governs
+all non-synthetic factory evidence before it can enter this adapter.
 
 ## Consequences
 

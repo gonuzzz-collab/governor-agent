@@ -15,6 +15,7 @@ Last reviewed: 2026-08-17
 | English README | PASS | Public instructions and boundaries |
 | Architecture diagram | PASS | Mermaid diagram in docs/architecture |
 | Agent evaluations | PASS | Four-case offline baseline |
+| Sanitized private evidence boundary | PASS WITH LIMITS | Typed classification, deterministic policy, secret/path controls, audit, and read-only real observation; complete governance registries remain pending |
 | Provenance disclosure | PASS FOR LOCAL | Final human/IP review pending |
 | Security review | PASS WITH OPEN CLOUD ITEMS | No cloud call or deployment tested |
 | Publication privacy scan | PASS WITH HUMAN GATE | No secret/path/binary finding; antecedent and owner disclosures need approval |

@@ -198,3 +198,34 @@ PROVENANCE.md instead of being presented as Governor progress.
 - Decision: private runtime uses Codex as a subordinate specialized capability, not as a custom
   Strands model provider. Bedrock remains optional for a future judge-accessible contest runtime and
   was not activated.
+
+## 2026-08-17 - Sanitized Evidence Boundary and first real observation
+
+- Commits: `e3827b7` typed evidence/privacy contracts; `474fbe6` sanitized-only intelligence
+  enforcement; `4446aa0` read-only real-factory evidence adapter; `dfb8e83` adversarial privacy
+  scenarios; documentation commit pending at the time of this entry.
+- Goal: consume useful real factory evidence without granting Governor, Strands, or Codex broad
+  repository access and without turning privacy into a prompt convention.
+- Contracts: separate local `RawEvidence` and external-safe `SanitizedEvidence`; explicit
+  PUBLIC/INTERNAL/CONFIDENTIAL/SECRET classes; fact/inference/policy/human/model kinds; source role,
+  trust, provenance, logical paths, aliases, redactions, digests, and deterministic external policy.
+- Security: fixed-source adapter, no application recursion or tool execution, path confinement,
+  symlink rejection, code/free-text minimization, critical secret patterns, SECRET hard block,
+  normative-source validation, provider pre-start type enforcement, and audit records without raw
+  values.
+- Real case: a read-only governance-readiness observation ran against the private factory. Only
+  sanitized aggregate source states were produced; no project identifiers, source content, private
+  absolute paths, credentials, or logs entered Governor artifacts. The factory Git status was
+  identical before and after the run.
+- Governor result: `INCOMPLETE_EVIDENCE`, with no authoritative change decision, because required
+  capability, authority, and permit registries are absent and several normative sources remain
+  partial. No default was invented.
+- Codex result: one opt-in network-enabled invocation through the explicitly selected ChatGPT
+  profile received only the sanitized object and returned evidence-backed architectural risks under
+  `ADVISORY_ONLY`. Two earlier sandboxed attempts failed before inference because network was
+  unavailable; raw stderr remained suppressed.
+- Tests: the final offline gate passed 84 tests in 0.843 seconds: 83 passed and the authenticated
+  Codex integration was skipped as designed. Factory baseline, Ruff, formatting, project doctor,
+  and all original 52 tests passed.
+- External services: no Bedrock, AWS credentials, API-key billing, AgentCore, deployment,
+  publication, or push. One successful call consumed local ChatGPT/Codex quota.

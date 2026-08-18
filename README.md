@@ -7,6 +7,10 @@ opt-in Codex CLI advisory boundary is also implemented and demonstrated using ex
 authentication. Amazon Bedrock remains optional and deliberately untested until credentials and
 cost authorization exist. This revision is an MVP, not yet the hardened contest submission.
 
+A sanitized evidence boundary is now implemented and demonstrated against the real factory in
+read-only mode. The observation exposes only classified aggregate facts and fails closed while
+mandatory machine-readable governance registries remain unavailable.
+
 ## Propósito
 
 AI coding agents increase software change velocity faster than human governance can scale. A change
@@ -67,6 +71,17 @@ The spike sends only synthetic evidence and returns an `ADVISORY_ONLY` architect
 It does not read the repository or alter ALLOW/DENY/ESCALATE. See the
 [local Codex spike guide](docs/demo/CODEX_LOCAL_SPIKE.md).
 
+Extract a real-factory readiness observation without exposing project content:
+
+    .venv/bin/governor inspect-factory-evidence /path/to/factory \
+      --audit-dir /safe/path/outside/factory \
+      --format json
+
+The expected current result is `INCOMPLETE_EVIDENCE`, not an ALLOW/DENY decision. Add
+`--codex-home` and `--allow-codex` only when the sanitized payload should be analyzed using local
+Codex quota. See the [privacy model](docs/security/EVIDENCE_PRIVACY_MODEL.md) and
+[ADR-004](docs/architecture/ADR-004-sanitized-evidence-boundary.md).
+
 Measure the agent against the versioned behavior suite:
 
     .venv/bin/governor eval-agent
@@ -121,6 +136,8 @@ third-party actions are pinned by commit digest and its token has read-only repo
 - No AWS deployment or paid model call by default.
 - No credential file is read, copied, logged, placed in fixtures, or committed.
 - Codex receives only a Governor-selected structured evidence package and has advisory authority.
+- Raw and sanitized evidence are separate types; deterministic policy blocks SECRET exposure.
+- Real-factory extraction uses a fixed read-only allowlist and writes audit records outside the factory.
 - Public demos use synthetic fixtures, never the private GoNucleo factory.
 
 ## Operación y recuperación
@@ -156,6 +173,12 @@ Apache-2.0. Third-party dependencies retain their own licenses.
   intelligence tool backed by stable `codex exec`, existing ChatGPT authentication, explicit
   `CODEX_HOME`, disabled execution/search tools, read-only sandbox, and schema-validated advisory
   output. Default tests use fakes and the local integration test is opt-in.
+- Implemented and demonstrated: typed PUBLIC/INTERNAL/CONFIDENTIAL/SECRET evidence, deterministic
+  external-processing policy, path/identifier privacy, bounded secret detection, sanitized-only
+  Codex requests, redacted evidence audit, and a fixed-source real-factory observation adapter.
+- Demonstrated read-only on the real factory: sanitized aggregate evidence, unchanged factory Git
+  state, honest `INCOMPLETE_EVIDENCE`, and one evidence-backed Codex advisory that could not alter
+  that result.
 - Implemented but not remotely demonstrated: injected Amazon Bedrock provider. The CLI requires
   `--allow-paid-inference` before it can make a Bedrock call.
 - Implemented and demonstrated hardening: versioned agent evaluations, audit digest verification,
@@ -170,5 +193,5 @@ Apache-2.0. Third-party dependencies retain their own licenses.
 - Assessed and deferred: direct Codex MCP consumption after the local locked-version spike exposed
   notification/result interoperability errors; custom model provider and experimental app-server
   integration add unnecessary coupling for this slice.
-- Next human gate: decide whether the proven Codex advisory boundary may receive a separately
-  defined, sanitized private-factory evidence contract. Bedrock and publication remain closed.
+- Next human gate: decide whether to define the missing machine-readable authority registry before
+  expanding the real observation beyond aggregate readiness. Bedrock and publication remain closed.
