@@ -116,6 +116,8 @@ class CodexExecIntelligenceProvider:
         self._environment = dict(os.environ if environment is None else environment)
 
     def analyze(self, request: IntelligenceRequest) -> ArchitecturalRiskReport:
+        if not isinstance(request, IntelligenceRequest):
+            raise TypeError("Codex intelligence accepts IntelligenceRequest only")
         codex_home, executable = self._config.validated()
         prompt = self._prompt(request)
         with tempfile.TemporaryDirectory(prefix="governor-codex-") as directory:

@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from typing import Annotated, Literal, Protocol
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator
+
+from governor_agent.evidence import SanitizedEvidence
 
 ShortText = Annotated[
     str,
@@ -19,7 +21,25 @@ class IntelligenceRequest(BaseModel):
 
     objective: ShortText
     scope: tuple[ShortText, ...] = Field(min_length=1, max_length=16)
-    evidence: tuple[ShortText, ...] = Field(min_length=1, max_length=32)
+    evidence: tuple[SanitizedEvidence, ...] = Field(min_length=1, max_length=32)
+
+    @field_validator("evidence", mode="before")
+    @classmethod
+    def require_sanitized_instances(cls, values: object) -> object:
+        if not isinstance(values, (tuple, list)) or any(
+            not isinstance(item, SanitizedEvidence) for item in values
+        ):
+            raise ValueError("intelligence evidence must contain SanitizedEvidence instances")
+        return values
+
+    @field_validator("evidence")
+    @classmethod
+    def require_external_permission(
+        cls, values: tuple[SanitizedEvidence, ...]
+    ) -> tuple[SanitizedEvidence, ...]:
+        if any(not item.external_processing_allowed for item in values):
+            raise ValueError("blocked evidence cannot be sent to external intelligence")
+        return values
 
 
 class ArchitecturalRisk(BaseModel):
@@ -38,6 +58,10 @@ class ArchitecturalRiskReport(BaseModel):
 
     summary: ShortText
     risks: tuple[ArchitecturalRisk, ...] = Field(min_length=1, max_length=16)
+    inconsistencies: tuple[ShortText, ...] = Field(default=(), max_length=16)
+    questions: tuple[ShortText, ...] = Field(default=(), max_length=16)
+    possible_impacts: tuple[ShortText, ...] = Field(default=(), max_length=16)
+    suggested_inspections: tuple[ShortText, ...] = Field(default=(), max_length=16)
 
 
 class IntelligenceEnvelope(BaseModel):

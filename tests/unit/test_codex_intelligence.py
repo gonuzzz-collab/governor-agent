@@ -6,6 +6,16 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from governor_agent.domain import EvidenceKind
+from governor_agent.evidence import (
+    ExternalProcessingAction,
+    FactValueKind,
+    InformationClassification,
+    RawEvidence,
+    RawFact,
+    SourceRole,
+    TrustLevel,
+)
 from governor_agent.intelligence import (
     ArchitecturalRiskReport,
     CodexExecConfig,
@@ -15,6 +25,7 @@ from governor_agent.intelligence import (
     IntelligenceRequest,
 )
 from governor_agent.intelligence.codex_exec import DISABLED_CODEX_FEATURES
+from governor_agent.intelligence.spike import SPIKE_EVIDENCE
 
 
 VALID_REPORT = {
@@ -49,7 +60,7 @@ class CodexExecIntelligenceTest(unittest.TestCase):
         self.request = IntelligenceRequest(
             objective="Assess a synthetic adapter.",
             scope=("read-only",),
-            evidence=("The adapter receives bounded context.",),
+            evidence=(SPIKE_EVIDENCE,),
         )
 
     def test_exec_is_ephemeral_read_only_structured_and_explicit(self) -> None:
@@ -103,7 +114,74 @@ class CodexExecIntelligenceTest(unittest.TestCase):
             observed["input"],
         )
         self.assertIn("Assess a synthetic adapter", observed["input"])
+        self.assertIn("governor.sanitized-evidence.v1", observed["input"])
         self.assertEqual(report.risks[0].evidence, ("Only bounded evidence is authorized.",))
+
+    def test_request_rejects_raw_strings_and_dictionary_bypasses(self) -> None:
+        for unsafe in (
+            ("raw repository content",),
+            (SPIKE_EVIDENCE.model_dump(mode="json"),),
+        ):
+            with self.subTest(unsafe=type(unsafe[0]).__name__):
+                with self.assertRaisesRegex(ValueError, "SanitizedEvidence instances"):
+                    IntelligenceRequest(
+                        objective="Unsafe bypass.",
+                        scope=("read-only",),
+                        evidence=unsafe,
+                    )
+
+    def test_request_rejects_policy_blocked_sanitized_evidence(self) -> None:
+        blocked = SPIKE_EVIDENCE.model_copy(
+            update={
+                "classification": InformationClassification.SECRET,
+                "external_processing_allowed": False,
+                "external_processing_action": ExternalProcessingAction.BLOCK_EXTERNAL_EXPOSURE,
+                "statements": (),
+            }
+        )
+        blocked = type(SPIKE_EVIDENCE).model_validate(blocked.model_dump())
+        with self.assertRaisesRegex(ValueError, "blocked evidence"):
+            IntelligenceRequest(
+                objective="Unsafe bypass.",
+                scope=("read-only",),
+                evidence=(blocked,),
+            )
+
+    def test_codex_provider_rejects_raw_evidence_before_process_start(self) -> None:
+        raw = RawEvidence(
+            evidence_id="raw-codex-bypass",
+            source_type="repository_file",
+            classification=InformationClassification.INTERNAL,
+            kind=EvidenceKind.FACT,
+            trust_level=TrustLevel.UNTRUSTED_REPOSITORY_CONTENT,
+            source_role=SourceRole.DESCRIPTIVE,
+            local_project="private-project",
+            event_type="repository_observation",
+            facts=(
+                RawFact(
+                    name="content",
+                    value="raw repository content",
+                    value_kind=FactValueKind.FREE_TEXT,
+                ),
+            ),
+        )
+        started = False
+
+        def fake_run(command, **kwargs):
+            nonlocal started
+            started = True
+            return subprocess.CompletedProcess(command, 0, json.dumps(VALID_REPORT), "")
+
+        provider = CodexExecIntelligenceProvider(
+            CodexExecConfig(
+                codex_home=self.codex_home.resolve(),
+                executable=str(self.executable),
+            ),
+            command_runner=fake_run,
+        )
+        with self.assertRaisesRegex(TypeError, "IntelligenceRequest only"):
+            provider.analyze(raw)  # type: ignore[arg-type]
+        self.assertFalse(started)
 
     def test_relative_codex_home_is_rejected_before_process_start(self) -> None:
         provider = CodexExecIntelligenceProvider(

@@ -12,7 +12,7 @@ from governor_agent.intelligence.models import (
     IntelligenceRequest,
 )
 from governor_agent.intelligence.runner import GovernorIntelligenceRunner
-from governor_agent.intelligence.spike import SPIKE_REQUEST, run_codex_spike
+from governor_agent.intelligence.spike import SPIKE_EVIDENCE, SPIKE_REQUEST, run_codex_spike
 
 __all__ = [
     "ArchitecturalRisk",
@@ -24,5 +24,6 @@ __all__ = [
     "IntelligenceProviderError",
     "IntelligenceRequest",
     "SPIKE_REQUEST",
+    "SPIKE_EVIDENCE",
     "run_codex_spike",
 ]
