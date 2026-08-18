@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from enum import Enum
 from pathlib import Path
-from typing import Protocol
+from typing import TYPE_CHECKING, Protocol
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -16,6 +16,9 @@ from governor_agent.domain import (
     Policy,
 )
 from governor_agent.domain.paths import validate_relative_path
+
+if TYPE_CHECKING:
+    from governor_agent.evidence import FactoryEvidenceCollection
 
 
 class GovernanceSourceError(RuntimeError):
@@ -81,3 +84,12 @@ class GovernanceSource(Protocol):
     def get_permit(self, request_id: str) -> ChangePermit | None: ...
 
     def get_validator(self, validator_id: str) -> ValidatorSpec: ...
+
+
+class FactoryEvidenceSource(Protocol):
+    """Read-only raw-evidence source isolated from any concrete factory layout."""
+
+    @property
+    def factory_root(self) -> Path: ...
+
+    def collect_evidence(self) -> "FactoryEvidenceCollection": ...

@@ -9,6 +9,7 @@ from governor_agent.intelligence.models import (
     ArchitecturalRisk,
     ArchitecturalRiskReport,
     IntelligenceEnvelope,
+    IntelligenceProvider,
     IntelligenceRequest,
 )
 from governor_agent.intelligence.runner import GovernorIntelligenceRunner
@@ -21,6 +22,7 @@ __all__ = [
     "CodexExecIntelligenceProvider",
     "GovernorIntelligenceRunner",
     "IntelligenceEnvelope",
+    "IntelligenceProvider",
     "IntelligenceProviderError",
     "IntelligenceRequest",
     "SPIKE_REQUEST",

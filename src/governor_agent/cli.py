@@ -12,6 +12,7 @@ from pydantic import ValidationError
 from governor_agent.adapters import (
     GoNucleoFactoryInventoryAdapter,
     GovernanceSourceError,
+    RealFactoryAdapter,
     SyntheticFactoryAdapter,
 )
 from governor_agent.agent import AgentConsistencyError, AgentRunResult, GovernorAgentRunner
@@ -23,7 +24,14 @@ from governor_agent.evaluation import (
     EvaluationSourceError,
     EvaluationStore,
 )
-from governor_agent.intelligence import IntelligenceProviderError, run_codex_spike
+from governor_agent.evidence import EvidenceAuditStore, EvidenceBoundaryError, EvidenceSanitizer
+from governor_agent.intelligence import (
+    CodexExecConfig,
+    CodexExecIntelligenceProvider,
+    IntelligenceProviderError,
+    run_codex_spike,
+)
+from governor_agent.observation import RealFactoryObservationRunner
 from governor_agent.workflow import GovernorWorkflow, WorkflowResult
 
 EXIT_CODES = {
@@ -142,6 +150,20 @@ def _parser() -> argparse.ArgumentParser:
         "--require-ready",
         action="store_true",
         help="Return exit code 9 unless every required governance registry exists.",
+    )
+
+    factory_evidence = subparsers.add_parser(
+        "inspect-factory-evidence",
+        help="Extract and sanitize fixed real-factory evidence without modifying the factory.",
+    )
+    factory_evidence.add_argument("root", type=Path)
+    factory_evidence.add_argument("--audit-dir", type=Path, default=Path(".governor"))
+    factory_evidence.add_argument("--format", choices=("text", "json"), default="text")
+    factory_evidence.add_argument("--codex-home", type=Path)
+    factory_evidence.add_argument(
+        "--allow-codex",
+        action="store_true",
+        help="Allow sanitized evidence to consume local Codex account quota.",
     )
     return parser
 
@@ -306,6 +328,33 @@ def main(argv: list[str] | None = None) -> int:
                 return 9
             return 0
 
+        if args.command == "inspect-factory-evidence":
+            if args.allow_codex != (args.codex_home is not None):
+                raise ValueError(
+                    "Codex evidence analysis requires both --allow-codex and --codex-home"
+                )
+            source = RealFactoryAdapter(args.root)
+            runner = RealFactoryObservationRunner(
+                source,
+                EvidenceSanitizer(source.factory_root),
+                EvidenceAuditStore(args.audit_dir),
+            )
+            provider = None
+            if args.allow_codex:
+                provider = CodexExecIntelligenceProvider(CodexExecConfig(args.codex_home))
+            result = runner.run(intelligence_provider=provider)
+            if args.format == "json":
+                print(result.model_dump_json(indent=2))
+            else:
+                print(f"Governor evidence status: {result.governance_status.value}")
+                print(f"Authoritative change decision: {result.authoritative_change_decision}")
+                print(f"Reason: {result.reason}")
+                print(f"Sanitized evidence items: {len(result.evidence)}")
+                print(f"Missing contracts: {', '.join(result.missing_contracts) or 'none'}")
+                print(f"Partial contracts: {', '.join(result.partial_contracts) or 'none'}")
+                print(f"Codex advisory: {'YES' if result.advisory is not None else 'NO'}")
+            return EXIT_CODES[result.governance_status]
+
         if args.command == "verify-audit":
             record = AuditStore(args.audit_dir).verify(args.record)
             if args.format == "json":
@@ -395,6 +444,7 @@ def main(argv: list[str] | None = None) -> int:
         AgentConsistencyError,
         EvaluationSourceError,
         IntelligenceProviderError,
+        EvidenceBoundaryError,
     ) as exc:
         print(f"Governor input error: {exc}", file=sys.stderr)
         return 2

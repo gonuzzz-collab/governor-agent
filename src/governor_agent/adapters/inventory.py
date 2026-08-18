@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import tomllib
 from collections import Counter
+from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from typing import Any
@@ -16,7 +17,17 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
 
 from governor_agent.adapters.contracts import GovernanceSourceError
+from governor_agent.domain import EvidenceKind
 from governor_agent.domain.paths import UnsafePathError, validate_relative_path
+from governor_agent.evidence import (
+    FactoryEvidenceCollection,
+    FactValueKind,
+    InformationClassification,
+    RawEvidence,
+    RawFact,
+    SourceRole,
+    TrustLevel,
+)
 
 MAX_FACTORY_FILE_BYTES = 1_000_000
 
@@ -27,6 +38,14 @@ class SourceReadiness(str, Enum):
     MISSING = "missing"
 
 
+class FactorySourceFormat(str, Enum):
+    TOML = "toml"
+    JSON_SCHEMA = "json-schema"
+    EXECUTABLE = "executable"
+    MARKDOWN = "markdown"
+    ABSENT = "absent"
+
+
 class FactorySourceInventory(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -34,6 +53,12 @@ class FactorySourceInventory(BaseModel):
     readiness: SourceReadiness
     normative: bool
     relative_location: str | None
+    format: FactorySourceFormat
+    machine_readable: bool
+    source_role: SourceRole
+    classification: InformationClassification
+    adapter_needed: bool
+    sanitization_needed: bool
     reason: str
 
 
@@ -51,57 +76,208 @@ class RealFactoryInventory(BaseModel):
     privacy_boundary: str
 
 
+@dataclass(frozen=True)
+class FactorySourceDefinition:
+    source: str
+    relative_location: str | None
+    readiness_when_present: SourceReadiness
+    normative: bool
+    format: FactorySourceFormat
+    machine_readable: bool
+    source_role: SourceRole
+    classification: InformationClassification
+    adapter_needed: bool
+    sanitization_needed: bool
+    reason: str
+
+
 class GoNucleoFactoryInventoryAdapter:
     """Inspect only fixed factory metadata paths; never recurse through application data."""
 
     FACTORY_MANIFEST = ".gonucleo-factory.toml"
     PROJECT_CATALOG = ".skills/factory-catalog.toml"
-    EXISTING_TOOL_SOURCES = (
-        (
-            "golden_path_tool",
-            ".skills/project-golden-path",
-            SourceReadiness.PARTIAL,
-            True,
-            "Tooling is normative for project scaffolding, not a complete change-policy source.",
+    FIXED_SOURCES = (
+        FactorySourceDefinition(
+            source="factory_manifest",
+            relative_location=FACTORY_MANIFEST,
+            readiness_when_present=SourceReadiness.AVAILABLE,
+            normative=True,
+            format=FactorySourceFormat.TOML,
+            machine_readable=True,
+            source_role=SourceRole.NORMATIVE,
+            classification=InformationClassification.INTERNAL,
+            adapter_needed=False,
+            sanitization_needed=True,
+            reason="Machine-readable factory identity and local automation contract.",
         ),
-        (
-            "factory_status_tool",
-            ".skills/factory-status",
-            SourceReadiness.PARTIAL,
-            True,
-            "Status is derived from the project catalog and project manifests.",
+        FactorySourceDefinition(
+            source="project_catalog",
+            relative_location=PROJECT_CATALOG,
+            readiness_when_present=SourceReadiness.AVAILABLE,
+            normative=True,
+            format=FactorySourceFormat.TOML,
+            machine_readable=True,
+            source_role=SourceRole.NORMATIVE,
+            classification=InformationClassification.INTERNAL,
+            adapter_needed=False,
+            sanitization_needed=True,
+            reason="Machine-readable application inventory and Golden Path adoption status.",
         ),
-        (
-            "change_permit_tool",
-            ".skills/change-permit",
-            SourceReadiness.PARTIAL,
-            True,
-            "A report-only permit workflow exists, but no persistent Governor permit registry exists.",
+        FactorySourceDefinition(
+            source="golden_path_tool",
+            relative_location=".skills/project-golden-path",
+            readiness_when_present=SourceReadiness.PARTIAL,
+            normative=True,
+            format=FactorySourceFormat.EXECUTABLE,
+            machine_readable=False,
+            source_role=SourceRole.NORMATIVE,
+            classification=InformationClassification.INTERNAL,
+            adapter_needed=True,
+            sanitization_needed=True,
+            reason="Normative scaffolding tool, not a complete machine-readable change-policy source.",
         ),
-        (
-            "safety_gate_tool",
-            ".skills/safety-gate",
-            SourceReadiness.PARTIAL,
-            True,
-            "Command risk classification exists, but it is not a general authority registry.",
+        FactorySourceDefinition(
+            source="factory_status_tool",
+            relative_location=".skills/factory-status",
+            readiness_when_present=SourceReadiness.PARTIAL,
+            normative=False,
+            format=FactorySourceFormat.EXECUTABLE,
+            machine_readable=True,
+            source_role=SourceRole.DESCRIPTIVE,
+            classification=InformationClassification.INTERNAL,
+            adapter_needed=True,
+            sanitization_needed=True,
+            reason="Derived project-state report from the catalog and project manifests.",
         ),
-    )
-    UNIMPLEMENTED_CONTRACTS = (
-        (
-            "capability_registry",
-            "The audited factory describes capability governance as a proposal, not an implemented registry.",
+        FactorySourceDefinition(
+            source="governance_policies",
+            relative_location="AGENTS.md",
+            readiness_when_present=SourceReadiness.PARTIAL,
+            normative=True,
+            format=FactorySourceFormat.MARKDOWN,
+            machine_readable=False,
+            source_role=SourceRole.NORMATIVE,
+            classification=InformationClassification.INTERNAL,
+            adapter_needed=True,
+            sanitization_needed=True,
+            reason="Authorized agent rules exist, but not as a complete typed Governor policy registry.",
         ),
-        (
-            "governance_policies",
-            "No complete machine-readable normative policy contract is currently defined.",
+        FactorySourceDefinition(
+            source="capability_governance_analysis",
+            relative_location="docs/fabrica_aplicaciones/GOBERNANZA_CAPACIDADES_CORTE0_2026-08-15.md",
+            readiness_when_present=SourceReadiness.PARTIAL,
+            normative=False,
+            format=FactorySourceFormat.MARKDOWN,
+            machine_readable=False,
+            source_role=SourceRole.DESCRIPTIVE,
+            classification=InformationClassification.CONFIDENTIAL,
+            adapter_needed=True,
+            sanitization_needed=True,
+            reason="Capability governance is an unclosed analysis, not an authority-bearing registry.",
         ),
-        (
-            "authority_registry",
-            "No machine-readable actor authority registry is currently defined.",
+        FactorySourceDefinition(
+            source="change_permit_tool",
+            relative_location=".skills/change-permit",
+            readiness_when_present=SourceReadiness.PARTIAL,
+            normative=True,
+            format=FactorySourceFormat.EXECUTABLE,
+            machine_readable=True,
+            source_role=SourceRole.NORMATIVE,
+            classification=InformationClassification.INTERNAL,
+            adapter_needed=True,
+            sanitization_needed=True,
+            reason="Report-only workflow exists without a persistent schema-compatible permit registry.",
         ),
-        (
-            "permit_registry",
-            "Change Permit exists as report-only workflow output, not a persistent registry contract.",
+        FactorySourceDefinition(
+            source="safety_gate_tool",
+            relative_location=".skills/safety-gate",
+            readiness_when_present=SourceReadiness.PARTIAL,
+            normative=True,
+            format=FactorySourceFormat.EXECUTABLE,
+            machine_readable=True,
+            source_role=SourceRole.NORMATIVE,
+            classification=InformationClassification.INTERNAL,
+            adapter_needed=True,
+            sanitization_needed=True,
+            reason="Deterministic command-risk gate, not a general actor-authority registry.",
+        ),
+        FactorySourceDefinition(
+            source="validator_registry",
+            relative_location=FACTORY_MANIFEST,
+            readiness_when_present=SourceReadiness.PARTIAL,
+            normative=True,
+            format=FactorySourceFormat.TOML,
+            machine_readable=True,
+            source_role=SourceRole.NORMATIVE,
+            classification=InformationClassification.INTERNAL,
+            adapter_needed=True,
+            sanitization_needed=True,
+            reason="Automation commands are declared, but approved validators are not a standalone registry.",
+        ),
+        FactorySourceDefinition(
+            source="evidence_contract",
+            relative_location="docs/fabrica_aplicaciones/schemas/gonucleo.evidence.v1.schema.json",
+            readiness_when_present=SourceReadiness.AVAILABLE,
+            normative=True,
+            format=FactorySourceFormat.JSON_SCHEMA,
+            machine_readable=True,
+            source_role=SourceRole.NORMATIVE,
+            classification=InformationClassification.INTERNAL,
+            adapter_needed=True,
+            sanitization_needed=True,
+            reason="Canonical machine-readable evidence interchange contract.",
+        ),
+        FactorySourceDefinition(
+            source="architecture",
+            relative_location="project_memory/ARCHITECTURE.md",
+            readiness_when_present=SourceReadiness.PARTIAL,
+            normative=False,
+            format=FactorySourceFormat.MARKDOWN,
+            machine_readable=False,
+            source_role=SourceRole.DESCRIPTIVE,
+            classification=InformationClassification.CONFIDENTIAL,
+            adapter_needed=True,
+            sanitization_needed=True,
+            reason="Narrative architecture context; it cannot establish policy by itself.",
+        ),
+        FactorySourceDefinition(
+            source="capability_registry",
+            relative_location=None,
+            readiness_when_present=SourceReadiness.MISSING,
+            normative=True,
+            format=FactorySourceFormat.ABSENT,
+            machine_readable=False,
+            source_role=SourceRole.NORMATIVE,
+            classification=InformationClassification.CONFIDENTIAL,
+            adapter_needed=True,
+            sanitization_needed=True,
+            reason="No machine-readable authority-bearing capability registry is defined.",
+        ),
+        FactorySourceDefinition(
+            source="authority_registry",
+            relative_location=None,
+            readiness_when_present=SourceReadiness.MISSING,
+            normative=True,
+            format=FactorySourceFormat.ABSENT,
+            machine_readable=False,
+            source_role=SourceRole.NORMATIVE,
+            classification=InformationClassification.CONFIDENTIAL,
+            adapter_needed=True,
+            sanitization_needed=True,
+            reason="No machine-readable actor-authority registry is defined.",
+        ),
+        FactorySourceDefinition(
+            source="permit_registry",
+            relative_location=None,
+            readiness_when_present=SourceReadiness.MISSING,
+            normative=True,
+            format=FactorySourceFormat.ABSENT,
+            machine_readable=False,
+            source_role=SourceRole.NORMATIVE,
+            classification=InformationClassification.CONFIDENTIAL,
+            adapter_needed=True,
+            sanitization_needed=True,
+            reason="No persistent schema-compatible Change Permit registry is defined.",
         ),
     )
 
@@ -111,6 +287,10 @@ class GoNucleoFactoryInventoryAdapter:
         self._root = root.resolve(strict=True)
         if not self._root.is_dir():
             raise GovernanceSourceError("real factory root must be a directory")
+
+    @property
+    def factory_root(self) -> Path:
+        return self._root
 
     def inspect(self) -> RealFactoryInventory:
         manifest = self._load_toml(self.FACTORY_MANIFEST)
@@ -137,26 +317,7 @@ class GoNucleoFactoryInventoryAdapter:
             adoption[self._required_string(project, "adoption", self.PROJECT_CATALOG)] += 1
             portfolio[self._required_string(project, "portfolio", self.PROJECT_CATALOG)] += 1
 
-        sources = (
-            FactorySourceInventory(
-                source="project_catalog",
-                readiness=SourceReadiness.AVAILABLE,
-                normative=True,
-                relative_location=self.PROJECT_CATALOG,
-                reason="Machine-readable application inventory and Golden Path adoption status.",
-            ),
-            *tuple(self._fixed_source(item) for item in self.EXISTING_TOOL_SOURCES),
-            *tuple(
-                FactorySourceInventory(
-                    source=name,
-                    readiness=SourceReadiness.MISSING,
-                    normative=True,
-                    relative_location=None,
-                    reason=reason,
-                )
-                for name, reason in self.UNIMPLEMENTED_CONTRACTS
-            ),
-        )
+        sources = tuple(self._fixed_source(item) for item in self.FIXED_SOURCES)
         required = {
             "project_catalog",
             "capability_registry",
@@ -183,25 +344,112 @@ class GoNucleoFactoryInventoryAdapter:
             ),
         )
 
+    def collect_evidence(self) -> FactoryEvidenceCollection:
+        """Extract only aggregate, typed facts from the fixed inventory allowlist."""
+
+        inventory = self.inspect()
+        missing = tuple(
+            item.source
+            for item in inventory.sources
+            if item.normative and item.readiness is SourceReadiness.MISSING
+        )
+        partial = tuple(
+            item.source
+            for item in inventory.sources
+            if item.normative and item.readiness is SourceReadiness.PARTIAL
+        )
+        facts = [
+            RawFact(
+                name="catalog_schema_version",
+                value=str(inventory.catalog_schema_version),
+                value_kind=FactValueKind.COUNT,
+            ),
+            RawFact(
+                name="project_count",
+                value=str(inventory.project_count),
+                value_kind=FactValueKind.COUNT,
+            ),
+            RawFact(
+                name="governance_ready",
+                value=str(inventory.ready_for_governance_evaluation).lower(),
+                value_kind=FactValueKind.BOOLEAN,
+            ),
+            RawFact(
+                name="missing_contract_count",
+                value=str(len(missing)),
+                value_kind=FactValueKind.COUNT,
+            ),
+            RawFact(
+                name="partial_contract_count",
+                value=str(len(partial)),
+                value_kind=FactValueKind.COUNT,
+            ),
+        ]
+        for adoption, count in sorted(inventory.adoption_counts.items()):
+            facts.append(
+                RawFact(
+                    name=f"adoption_{adoption.replace('-', '_')}",
+                    value=str(count),
+                    value_kind=FactValueKind.COUNT,
+                )
+            )
+        for source in inventory.sources:
+            facts.append(
+                RawFact(
+                    name=f"source_{source.source}",
+                    value=source.readiness.value,
+                    value_kind=FactValueKind.ENUM,
+                )
+            )
+        raw = RawEvidence(
+            evidence_id="raw-factory-readiness",
+            source_type="factory_inventory",
+            classification=InformationClassification.INTERNAL,
+            kind=EvidenceKind.FACT,
+            trust_level=TrustLevel.OBSERVED_SOURCE,
+            source_role=SourceRole.DESCRIPTIVE,
+            local_project=inventory.factory_id,
+            local_component="governance-metadata",
+            event_type="governance_readiness_observation",
+            facts=tuple(facts),
+            applicable_policy_refs=("fixed-source-allowlist", "read-only-evidence"),
+        )
+        return FactoryEvidenceCollection(
+            evidence=(raw,),
+            ready_for_governance_evaluation=inventory.ready_for_governance_evaluation,
+            missing_contracts=missing,
+            partial_contracts=partial,
+        )
+
     def _fixed_source(
         self,
-        definition: tuple[str, str, SourceReadiness, bool, str],
+        definition: FactorySourceDefinition,
     ) -> FactorySourceInventory:
-        name, relative, present_readiness, normative, reason = definition
-        path = self._root / relative
-        readiness = (
-            present_readiness
-            if path.is_file() and not path.is_symlink()
-            else SourceReadiness.MISSING
-        )
+        relative = definition.relative_location
+        readiness = definition.readiness_when_present
+        if relative is not None:
+            path = self._root / relative
+            readiness = (
+                definition.readiness_when_present
+                if path.is_file() and not path.is_symlink()
+                else SourceReadiness.MISSING
+            )
         return FactorySourceInventory(
-            source=name,
+            source=definition.source,
             readiness=readiness,
-            normative=normative,
+            normative=definition.normative,
             relative_location=relative,
-            reason=reason
-            if readiness is not SourceReadiness.MISSING
-            else "Declared source is absent.",
+            format=definition.format,
+            machine_readable=definition.machine_readable,
+            source_role=definition.source_role,
+            classification=definition.classification,
+            adapter_needed=definition.adapter_needed,
+            sanitization_needed=definition.sanitization_needed,
+            reason=(
+                definition.reason
+                if readiness is not SourceReadiness.MISSING or relative is None
+                else "Declared source is absent."
+            ),
         )
 
     def _load_toml(self, relative: str) -> dict[str, Any]:
@@ -232,3 +480,7 @@ class GoNucleoFactoryInventoryAdapter:
         if not isinstance(value, str) or not value.strip():
             raise GovernanceSourceError(f"{source} requires a non-empty {field}")
         return value.strip()
+
+
+class RealFactoryAdapter(GoNucleoFactoryInventoryAdapter):
+    """Canonical read-only adapter name; legacy inventory name remains compatible."""

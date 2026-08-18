@@ -31,6 +31,10 @@ Identifier = Annotated[
 ]
 
 
+class EvidenceBoundaryError(RuntimeError):
+    """Evidence could not cross a required local safety boundary."""
+
+
 class InformationClassification(str, Enum):
     PUBLIC = "PUBLIC"
     INTERNAL = "INTERNAL"
@@ -242,3 +246,14 @@ class SanitizationResult(BaseModel):
 
     evidence: SanitizedEvidence
     audit: SanitizationAudit
+
+
+class FactoryEvidenceCollection(BaseModel):
+    """Local-only adapter output before sanitization."""
+
+    model_config = MODEL_CONFIG
+
+    evidence: tuple[RawEvidence, ...] = Field(min_length=1, max_length=16)
+    ready_for_governance_evaluation: bool
+    missing_contracts: tuple[Identifier, ...] = Field(default=(), max_length=32)
+    partial_contracts: tuple[Identifier, ...] = Field(default=(), max_length=32)

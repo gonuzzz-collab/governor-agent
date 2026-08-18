@@ -8,8 +8,8 @@ import re
 from collections.abc import Iterable
 from pathlib import Path
 
-from governor_agent.adapters import GovernanceSourceError
 from governor_agent.evidence.models import (
+    EvidenceBoundaryError,
     EvidenceDigest,
     EvidenceProvenance,
     EvidenceStatement,
@@ -83,10 +83,10 @@ class EvidenceSanitizer:
         private_identifiers: Iterable[str] = (),
     ) -> None:
         if workspace_root.is_symlink():
-            raise GovernanceSourceError("evidence workspace root must not be a symlink")
+            raise EvidenceBoundaryError("evidence workspace root must not be a symlink")
         self._root = workspace_root.resolve(strict=True)
         if not self._root.is_dir():
-            raise GovernanceSourceError("evidence workspace root must be a directory")
+            raise EvidenceBoundaryError("evidence workspace root must be a directory")
         self._policy = policy or ExternalIntelligencePolicy()
         self._detector = secret_detector or SecretDetector()
         default_private = {Path.home().name, self._root.name}
@@ -227,13 +227,13 @@ class EvidenceSanitizer:
         if path is None:
             return "factory://derived-observation"
         if path.is_symlink():
-            raise GovernanceSourceError("raw evidence source must not be a symlink")
+            raise EvidenceBoundaryError("raw evidence source must not be a symlink")
         try:
             relative = path.resolve(strict=True).relative_to(self._root)
         except (FileNotFoundError, ValueError) as exc:
-            raise GovernanceSourceError("raw evidence source escapes the factory root") from exc
+            raise EvidenceBoundaryError("raw evidence source escapes the factory root") from exc
         if not path.is_file():
-            raise GovernanceSourceError("raw evidence source must be a regular file")
+            raise EvidenceBoundaryError("raw evidence source must be a regular file")
         return f"factory://{relative.as_posix()}"
 
     @staticmethod

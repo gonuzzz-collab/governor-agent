@@ -46,6 +46,10 @@ class EvidenceAuditStore:
     def __init__(self, root: Path) -> None:
         self._root = root.resolve()
 
+    @property
+    def root(self) -> Path:
+        return self._root
+
     def record(
         self,
         sanitization: SanitizationAudit,

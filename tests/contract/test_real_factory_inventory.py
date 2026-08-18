@@ -5,8 +5,10 @@ import unittest
 from pathlib import Path
 
 from governor_agent.adapters import (
+    FactorySourceFormat,
     GoNucleoFactoryInventoryAdapter,
     GovernanceSourceError,
+    RealFactoryAdapter,
     SourceReadiness,
 )
 
@@ -47,7 +49,39 @@ portfolio = "reference"
         self.assertEqual(statuses["capability_registry"], SourceReadiness.MISSING)
         capability = next(item for item in report.sources if item.source == "capability_registry")
         self.assertIsNone(capability.relative_location)
+        catalog = next(item for item in report.sources if item.source == "project_catalog")
+        self.assertEqual(catalog.format, FactorySourceFormat.TOML)
+        self.assertTrue(catalog.machine_readable)
+        self.assertTrue(catalog.normative)
+        self.assertTrue(catalog.sanitization_needed)
         serialized = report.model_dump_json()
+        self.assertNotIn("apps/sample", serialized)
+        self.assertNotIn('"sample"', serialized)
+
+    def test_real_adapter_collects_aggregate_raw_evidence_without_writes(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "factory"
+            root.mkdir()
+            self.create_factory(root)
+            before = {
+                path.relative_to(root).as_posix(): path.read_bytes()
+                for path in root.rglob("*")
+                if path.is_file()
+            }
+
+            collection = RealFactoryAdapter(root).collect_evidence()
+
+            after = {
+                path.relative_to(root).as_posix(): path.read_bytes()
+                for path in root.rglob("*")
+                if path.is_file()
+            }
+        self.assertEqual(before, after)
+        self.assertFalse(collection.ready_for_governance_evaluation)
+        self.assertIn("authority_registry", collection.missing_contracts)
+        self.assertIn("permit_registry", collection.missing_contracts)
+        self.assertIn("golden_path_tool", collection.partial_contracts)
+        serialized = collection.model_dump_json()
         self.assertNotIn("apps/sample", serialized)
         self.assertNotIn('"sample"', serialized)
 

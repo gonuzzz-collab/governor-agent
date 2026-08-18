@@ -7,6 +7,8 @@ from governor_agent.evidence.audit import (
 )
 from governor_agent.evidence.models import (
     EvidenceDigest,
+    EvidenceBoundaryError,
+    FactoryEvidenceCollection,
     EvidenceProvenance,
     EvidenceStatement,
     ExternalProcessingAction,
@@ -32,6 +34,8 @@ __all__ = [
     "EvidenceAuditRecord",
     "EvidenceAuditStore",
     "EvidenceDigest",
+    "EvidenceBoundaryError",
+    "FactoryEvidenceCollection",
     "EvidenceProvenance",
     "EvidenceSanitizer",
     "EvidenceStatement",

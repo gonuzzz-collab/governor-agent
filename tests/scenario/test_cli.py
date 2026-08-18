@@ -229,3 +229,55 @@ portfolio = "legacy-review"
         self.assertEqual(code, 0)
         self.assertEqual(payload["project_count"], 1)
         self.assertNotIn("private-project-name", output_text)
+
+    def test_real_factory_evidence_cli_is_sanitized_and_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as directory, io.StringIO() as output:
+            root = Path(directory) / "factory"
+            (root / ".skills").mkdir(parents=True)
+            (root / ".gonucleo-factory.toml").write_text(
+                'schema = "factory.v1"\nid = "private-factory"\n', encoding="utf-8"
+            )
+            (root / ".skills" / "factory-catalog.toml").write_text(
+                """schema_version = 2
+[[projects]]
+id = "private-project-name"
+path = "apps/private-project-name"
+adoption = "legacy"
+portfolio = "legacy-review"
+""",
+                encoding="utf-8",
+            )
+            audit_root = Path(directory) / "audit"
+            with contextlib.redirect_stdout(output):
+                code = main(
+                    [
+                        "inspect-factory-evidence",
+                        str(root),
+                        "--audit-dir",
+                        str(audit_root),
+                        "--format",
+                        "json",
+                    ]
+                )
+            output_text = output.getvalue()
+            payload = json.loads(output_text)
+
+        self.assertEqual(code, 5)
+        self.assertEqual(payload["governance_status"], "INCOMPLETE_EVIDENCE")
+        self.assertFalse(payload["authoritative_change_decision"])
+        self.assertNotIn("private-factory", output_text)
+        self.assertNotIn("private-project-name", output_text)
+        self.assertNotIn(str(root), output_text)
+
+    def test_real_factory_codex_requires_home_and_quota_acknowledgement_together(self) -> None:
+        with io.StringIO() as error, contextlib.redirect_stderr(error):
+            code = main(
+                [
+                    "inspect-factory-evidence",
+                    "/not-read-because-gate-runs-first",
+                    "--allow-codex",
+                ]
+            )
+            error_text = error.getvalue()
+        self.assertEqual(code, 2)
+        self.assertIn("both --allow-codex and --codex-home", error_text)

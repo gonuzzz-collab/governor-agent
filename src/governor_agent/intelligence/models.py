@@ -58,10 +58,6 @@ class ArchitecturalRiskReport(BaseModel):
 
     summary: ShortText
     risks: tuple[ArchitecturalRisk, ...] = Field(min_length=1, max_length=16)
-    inconsistencies: tuple[ShortText, ...] = Field(default=(), max_length=16)
-    questions: tuple[ShortText, ...] = Field(default=(), max_length=16)
-    possible_impacts: tuple[ShortText, ...] = Field(default=(), max_length=16)
-    suggested_inspections: tuple[ShortText, ...] = Field(default=(), max_length=16)
 
 
 class IntelligenceEnvelope(BaseModel):
