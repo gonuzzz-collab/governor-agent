@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import json
+import inspect
 import tempfile
 import unittest
 from pathlib import Path
 
 from strands import Agent
+from strands.tools.executors import SequentialToolExecutor
 
 from governor_agent.adapters import SyntheticFactoryAdapter
 from governor_agent.agent import (
@@ -14,6 +16,7 @@ from governor_agent.agent import (
     GovernorAgentRunner,
 )
 from governor_agent.agent.offline_model import DeterministicGovernorModel
+from governor_agent.agent.tools import GovernorToolSession
 from governor_agent.audit import AuditStore
 from governor_agent.domain import DecisionStatus
 
@@ -23,6 +26,19 @@ FACTORY = ROOT / "fixtures" / "demo_factory"
 
 
 class GovernorStrandsAgentTest(unittest.TestCase):
+    def test_governance_tools_avoid_sync_thread_dispatch(self) -> None:
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        session = GovernorToolSession(
+            SyntheticFactoryAdapter(FACTORY),
+            AuditStore(Path(temporary.name)),
+            FACTORY / "scenarios" / "safe.json",
+        )
+
+        tools = session.strands_tools()
+
+        self.assertTrue(all(inspect.iscoroutinefunction(item.__wrapped__) for item in tools))
+
     def run_scenario(self, name: str):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
@@ -32,6 +48,7 @@ class GovernorStrandsAgentTest(unittest.TestCase):
             FACTORY / "scenarios" / f"{name}.json",
         )
         self.assertIsInstance(runner.strands_agent, Agent)
+        self.assertIsInstance(runner.strands_agent.tool_executor, SequentialToolExecutor)
         return runner.run()
 
     def test_safe_scenario_uses_real_strands_tool_loop(self) -> None:

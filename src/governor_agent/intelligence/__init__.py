@@ -1,0 +1,28 @@
+"""Advisory intelligence providers below Governor's deterministic authority."""
+
+from governor_agent.intelligence.codex_exec import (
+    CodexExecConfig,
+    CodexExecIntelligenceProvider,
+    IntelligenceProviderError,
+)
+from governor_agent.intelligence.models import (
+    ArchitecturalRisk,
+    ArchitecturalRiskReport,
+    IntelligenceEnvelope,
+    IntelligenceRequest,
+)
+from governor_agent.intelligence.runner import GovernorIntelligenceRunner
+from governor_agent.intelligence.spike import SPIKE_REQUEST, run_codex_spike
+
+__all__ = [
+    "ArchitecturalRisk",
+    "ArchitecturalRiskReport",
+    "CodexExecConfig",
+    "CodexExecIntelligenceProvider",
+    "GovernorIntelligenceRunner",
+    "IntelligenceEnvelope",
+    "IntelligenceProviderError",
+    "IntelligenceRequest",
+    "SPIKE_REQUEST",
+    "run_codex_spike",
+]

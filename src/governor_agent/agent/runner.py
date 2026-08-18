@@ -6,6 +6,7 @@ from pathlib import Path
 
 from strands import Agent
 from strands.models import Model
+from strands.tools.executors import SequentialToolExecutor
 
 from governor_agent.adapters import GovernanceSource
 from governor_agent.agent.models import AgentGovernanceReport, AgentRunResult
@@ -55,6 +56,7 @@ class GovernorAgentRunner:
             system_prompt=SYSTEM_PROMPT,
             callback_handler=None,
             hooks=[self._trace],
+            tool_executor=SequentialToolExecutor(),
             name="governor",
             description="Govern AI-assisted software changes with explicit authority and evidence.",
         )

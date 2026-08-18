@@ -27,3 +27,23 @@ rates. These are fixture-suite results, not general production performance claim
 
 Each run appends its report under `.governor/evaluations/`. Evaluation changes require a suite
 version change when expected behavior changes materially.
+
+## Codex intelligence boundary
+
+The Codex adapter is outside the authoritative decision suite. Unit tests inject a fake subprocess
+runner and verify the exact least-privilege command, environment allowlist, structured schema,
+authority separation, invalid-output failure, and sanitized errors without Codex or network access.
+
+The authenticated test is intentionally opt-in:
+
+```bash
+env \
+  GOVERNOR_RUN_CODEX_INTEGRATION=1 \
+  GOVERNOR_CODEX_HOME=/absolute/path/to/chosen-codex-home \
+  PYTHONPATH=src \
+  .venv/bin/python -m unittest tests.integration.test_codex_local_opt_in
+```
+
+It uses only the fixed synthetic risk-analysis request. Public CI must not set these variables or
+depend on a contributor's ChatGPT account. A skipped local integration test is the expected default
+result.

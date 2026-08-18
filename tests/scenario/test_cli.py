@@ -6,8 +6,10 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from governor_agent.cli import main
+from governor_agent.intelligence import IntelligenceEnvelope
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -89,6 +91,50 @@ class CliScenarioTest(unittest.TestCase):
             error_text = error.getvalue()
         self.assertEqual(code, 2)
         self.assertIn("--allow-paid-inference", error_text)
+
+    def test_codex_requires_explicit_quota_acknowledgement(self) -> None:
+        with io.StringIO() as error, contextlib.redirect_stderr(error):
+            code = main(
+                [
+                    "codex-spike",
+                    "--codex-home",
+                    "/explicit/codex-home",
+                ]
+            )
+            error_text = error.getvalue()
+        self.assertEqual(code, 2)
+        self.assertIn("--allow-codex", error_text)
+
+    @patch("governor_agent.cli.run_codex_spike")
+    def test_codex_spike_renders_advisory_json(self, fake_spike) -> None:
+        fake_spike.return_value = IntelligenceEnvelope(
+            report={
+                "summary": "Synthetic result.",
+                "risks": [
+                    {
+                        "risk": "Context could be broader than required.",
+                        "evidence": ["Context is explicitly bounded."],
+                    }
+                ],
+            }
+        )
+        with io.StringIO() as output, contextlib.redirect_stdout(output):
+            code = main(
+                [
+                    "codex-spike",
+                    "--codex-home",
+                    "/explicit/codex-home",
+                    "--allow-codex",
+                    "--format",
+                    "json",
+                ]
+            )
+            output_text = output.getvalue()
+        payload = json.loads(output_text)
+        self.assertEqual(code, 0)
+        self.assertEqual(payload["authority"], "ADVISORY_ONLY")
+        self.assertNotIn("status", payload["report"])
+        fake_spike.assert_called_once_with(Path("/explicit/codex-home"))
 
     def test_agent_evaluation_cli_reports_metrics(self) -> None:
         with tempfile.TemporaryDirectory() as directory, io.StringIO() as output:

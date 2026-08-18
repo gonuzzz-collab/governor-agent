@@ -23,6 +23,7 @@ from governor_agent.evaluation import (
     EvaluationSourceError,
     EvaluationStore,
 )
+from governor_agent.intelligence import IntelligenceProviderError, run_codex_spike
 from governor_agent.workflow import GovernorWorkflow, WorkflowResult
 
 EXIT_CODES = {
@@ -82,6 +83,23 @@ def _parser() -> argparse.ArgumentParser:
         type=Path,
         default=_repo_root() / "fixtures" / "demo_factory",
     )
+
+    codex_spike = subparsers.add_parser(
+        "codex-spike",
+        help="Run an opt-in synthetic advisory analysis through local authenticated Codex.",
+    )
+    codex_spike.add_argument(
+        "--codex-home",
+        type=Path,
+        required=True,
+        help="Explicit absolute CODEX_HOME to use; Governor never reads auth.json.",
+    )
+    codex_spike.add_argument(
+        "--allow-codex",
+        action="store_true",
+        help="Required acknowledgement before consuming local Codex account quota.",
+    )
+    codex_spike.add_argument("--format", choices=("text", "json"), default="text")
     agent_demo.add_argument("--audit-dir", type=Path, default=Path(".governor"))
     agent_demo.add_argument("--format", choices=("text", "json"), default="text")
     agent_demo.add_argument("--model", choices=("offline", "bedrock"), default="offline")
@@ -252,6 +270,23 @@ def _render_scenarios(
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
+        if args.command == "codex-spike":
+            if not args.allow_codex:
+                raise ValueError("Codex requires --allow-codex")
+            result = run_codex_spike(args.codex_home)
+            if args.format == "json":
+                print(result.model_dump_json(indent=2))
+            else:
+                print(f"Intelligence provider: {result.provider}")
+                print(f"Authority: {result.authority}")
+                print(f"Summary: {result.report.summary}")
+                print("Architectural risks:")
+                for item in result.report.risks:
+                    print(f"  - {item.risk}")
+                    for evidence in item.evidence:
+                        print(f"    Evidence: {evidence}")
+            return 0
+
         if args.command == "inspect-factory":
             inventory = GoNucleoFactoryInventoryAdapter(args.root).inspect()
             if args.format == "json":
@@ -359,6 +394,7 @@ def main(argv: list[str] | None = None) -> int:
         GovernanceSourceError,
         AgentConsistencyError,
         EvaluationSourceError,
+        IntelligenceProviderError,
     ) as exc:
         print(f"Governor input error: {exc}", file=sys.stderr)
         return 2

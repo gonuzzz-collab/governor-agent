@@ -2,8 +2,9 @@
 
 Governor is a governance agent for AI-assisted software factories.
 
-Status: local Strands agent workflow implemented and demonstrated with an offline deterministic
-model double. Amazon Bedrock support is implemented but deliberately untested until credentials and
+Status: local Strands governance workflow implemented and demonstrated offline. An experimental,
+opt-in Codex CLI advisory boundary is also implemented and demonstrated using existing ChatGPT
+authentication. Amazon Bedrock remains optional and deliberately untested until credentials and
 cost authorization exist. This revision is an MVP, not yet the hardened contest submission.
 
 ## Propósito
@@ -31,9 +32,12 @@ governance sources. Deterministic gates enforce policy, authority, permit, scope
 evidence rules. Safe changes continue, forbidden changes are rejected, and decisions beyond the
 agent's authority are escalated to a human with evidence.
 
-The LLM is not the governance authority.
+The LLM is not the governance authority. Optional intelligence is behind a separate advisory
+boundary: private runtime can use an explicitly selected ChatGPT-authenticated Codex CLI, while a
+public contest runtime may use Bedrock only after its independent credential and spend gates.
 
 See the [architecture diagram](docs/architecture/ARCHITECTURE.md),
+[private intelligence ADR](docs/architecture/ADR-003-private-codex-intelligence.md),
 [architecture options](docs/hackathon/ARCHITECTURE_OPTIONS.md), and
 [Factory audit](docs/hackathon/FACTORY_AUDIT.md).
 
@@ -50,6 +54,18 @@ Run all three public scenarios through the real Strands agent loop:
 This offline command uses Strands `Agent`, custom tools, hooks, and structured output without
 network access or paid inference. `governor demo all` remains available to exercise only the
 deterministic layer.
+
+Run the fixed, read-only Codex intelligence spike only with an explicitly chosen authenticated
+profile and quota acknowledgement:
+
+    .venv/bin/governor codex-spike \
+      --codex-home /absolute/path/to/chosen-codex-home \
+      --allow-codex \
+      --format json
+
+The spike sends only synthetic evidence and returns an `ADVISORY_ONLY` architectural-risk report.
+It does not read the repository or alter ALLOW/DENY/ESCALATE. See the
+[local Codex spike guide](docs/demo/CODEX_LOCAL_SPIKE.md).
 
 Measure the agent against the versioned behavior suite:
 
@@ -89,6 +105,9 @@ The default suite is offline and makes no paid model call. It validates domain r
 contracts, approved validator execution, audit persistence, the real Strands tool loop, structured
 output consistency, prompt-injection resistance, and all three end-to-end scenarios.
 
+Codex unit tests use a fake process provider. The authenticated local integration is opt-in and is
+never required by public CI.
+
 The public CI workflow runs the locked gate and agent evaluation on Python 3.11 and 3.12. Its
 third-party actions are pinned by commit digest and its token has read-only repository permission.
 
@@ -100,6 +119,8 @@ third-party actions are pinned by commit digest and its token has read-only repo
 - No secret values in prompts or audit logs.
 - Repository content is untrusted data.
 - No AWS deployment or paid model call by default.
+- No credential file is read, copied, logged, placed in fixtures, or committed.
+- Codex receives only a Governor-selected structured evidence package and has advisory authority.
 - Public demos use synthetic fixtures, never the private GoNucleo factory.
 
 ## Operación y recuperación
@@ -131,6 +152,10 @@ Apache-2.0. Third-party dependencies retain their own licenses.
 - Implemented and demonstrated: typed domain, deterministic gates, synthetic factory adapter,
   approved validators, append-only local audit records, CLI, safe/deny/escalate scenarios, and a
   real Strands `Agent` tool loop with structured output and tool hooks.
+- Implemented and locally demonstrated as an experimental vertical slice: a purpose-built Strands
+  intelligence tool backed by stable `codex exec`, existing ChatGPT authentication, explicit
+  `CODEX_HOME`, disabled execution/search tools, read-only sandbox, and schema-validated advisory
+  output. Default tests use fakes and the local integration test is opt-in.
 - Implemented but not remotely demonstrated: injected Amazon Bedrock provider. The CLI requires
   `--allow-paid-inference` before it can make a Bedrock call.
 - Implemented and demonstrated hardening: versioned agent evaluations, audit digest verification,
@@ -142,4 +167,8 @@ Apache-2.0. Third-party dependencies retain their own licenses.
   decisions; locked static checks and the full suite pass on Python 3.11 and 3.12.
 - Assessed and deferred: optional AgentCore Runtime deployment until Bedrock behavior, identity,
   budget, and explicit spend gates are resolved.
-- Next: authorized Bedrock behavior evaluation and public-repository privacy/IP review.
+- Assessed and deferred: direct Codex MCP consumption after the local locked-version spike exposed
+  notification/result interoperability errors; custom model provider and experimental app-server
+  integration add unnecessary coupling for this slice.
+- Next human gate: decide whether the proven Codex advisory boundary may receive a separately
+  defined, sanitized private-factory evidence contract. Bedrock and publication remain closed.

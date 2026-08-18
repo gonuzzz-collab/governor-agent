@@ -44,6 +44,7 @@ submission boundary: the submission is Governor, not the factory.
 |---|---|---|---|---|
 | Python | Python Software Foundation | Project floor 3.11; locked environment currently 3.12 | Standard language and runtime | Normal dependency disclosure |
 | Strands Agents SDK | Strands Agents and AWS | 1.52.0 observed 2026-08-17 | Required open-source agent framework, Apache-2.0 | Pin version and link official docs |
+| OpenAI Codex CLI | OpenAI | 0.147.0 observed 2026-08-17 | Optional external private-runtime executable; not vendored or packaged | Record tested compatibility; require separate local authentication |
 | Pydantic | Pydantic maintainers | 2.13.4 observed 2026-08-17 | Structured validation dependency, MIT | Pinned runtime dependency |
 | Hatchling | PyPA | 1.32.0 observed 2026-08-17 | Reproducible build backend, MIT | Pinned build dependency |
 | Python standard library | Python Software Foundation | Runtime-provided | Standard library | No special pre-existing disclosure |
@@ -63,6 +64,7 @@ Additional dependencies must be added only when implemented and recorded with ex
 | Agent evaluation harness and audit verification | Governor repository | 2026-08-17 | Commit `f76751f` | New hackathon work |
 | Privacy-preserving real-factory inventory adapter | Governor repository | 2026-08-17 | Commit `99ff87d` | New hackathon work; no private content copied |
 | Submission drafts and clean-clone evidence | Governor repository | 2026-08-17 | Commit `ed1c142` | New hackathon work |
+| Private Codex advisory intelligence boundary and spike | Governor repository | 2026-08-17 | Uncommitted working tree; commit pending human authorization | New hackathon work; no Codex source or private authentication material incorporated |
 
 ## UNCERTAIN OR NEEDS REVIEW
 

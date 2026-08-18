@@ -23,7 +23,8 @@ on Python 3.11.15 and 3.12.13; public CI repeats both versions after publication
 ```
 
 This command runs locked Ruff checks and all deterministic, integration, security, scenario,
-Strands, and agent-evaluation tests. It does not need AWS credentials.
+Strands, and agent-evaluation tests. Codex behavior is represented by fakes; the authenticated local
+integration test is skipped. The gate needs neither AWS credentials nor a ChatGPT account.
 
 ## Demonstrate
 
@@ -44,4 +45,5 @@ offline model is clearly labeled and exists to exercise the real Strands tool lo
 ```
 
 No production system or private factory is required. Testing access will remain free through the
-official judging period. Optional Bedrock execution is not part of free judging access.
+official judging period. Optional Bedrock execution and private Codex-account integration are not
+part of free judging access.

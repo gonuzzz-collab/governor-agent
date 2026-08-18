@@ -167,3 +167,34 @@ PROVENANCE.md instead of being presented as Governor progress.
   acceptance, and actual publication still require explicit approval.
 - Contest relevance: protects the public/private boundary and makes the provenance disclosure
   defensible without pretending an automated scan is legal or privacy authorization.
+
+## 2026-08-17 - Private Codex advisory intelligence boundary
+
+- Commit: pending explicit human authorization.
+- Goal: remove Bedrock as a mandatory source of useful private-runtime intelligence while keeping
+  deterministic governance authoritative and Strands central.
+- Official research: current OpenAI Codex CLI, `codex exec`, `codex mcp-server`, app-server, ChatGPT
+  authentication, and configuration documentation; current Strands MCP, custom model provider, and
+  provider documentation.
+- Spike result: Codex MCP returned useful risk content in events but did not produce a consumable
+  final tool result through the locked Strands/MCP versions. Stable `codex exec` returned a
+  schema-valid evidence-backed report and was selected. Three opt-in subscription-backed spike
+  invocations completed through the explicitly selected private ChatGPT profile; no API-key billing,
+  Bedrock, AWS resource, repository mutation, or publication occurred.
+- Implementation: typed advisory request/report/envelope, low-coupling provider protocol,
+  least-privilege Codex subprocess adapter, request-bound Strands tool, fixed synthetic CLI spike,
+  fake unit tests, and opt-in local integration test.
+- Security: Governor never reads or copies the authentication file; the command forces ChatGPT
+  login, ignores private config/rules, disables shell/web/image/subagent tools, runs read-only and
+  ephemeral in a temporary directory, filters environment variables, validates bounded structured
+  output, and suppresses raw provider errors.
+- Regression fix: the three existing governance tools are now async and explicitly sequential. This
+  avoids a reproducible Strands 1.52 synchronous thread-dispatch stall while preserving their
+  mandatory order; a regression test protects the execution strategy.
+- Tests: the offline gate passed 61 tests in 0.824 seconds: 60 passed and the authenticated Codex
+  integration was skipped as designed. The separately authorized local integration passed 1/1 in
+  8.261 seconds using only the fixed synthetic request. Factory baseline, Ruff, formatting, and
+  project doctor all passed.
+- Decision: private runtime uses Codex as a subordinate specialized capability, not as a custom
+  Strands model provider. Bedrock remains optional for a future judge-accessible contest runtime and
+  was not activated.

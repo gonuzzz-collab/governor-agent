@@ -1,6 +1,7 @@
 # Governor Architecture
 
-Status: local Strands MVP implemented and demonstrated offline.
+Status: local Strands MVP implemented and demonstrated offline; experimental private Codex
+advisory boundary implemented and demonstrated opt-in.
 
 ```mermaid
 flowchart TD
@@ -8,6 +9,9 @@ flowchart TD
     B[Builder change] --> R
     R --> A[Governor Agent / Strands]
     A --> T[Purpose-built inspection tools]
+    A --> I[Intelligence boundary]
+    I --> CI[Codex exec / private and advisory]
+    I -. optional contest model .-> BM[Amazon Bedrock]
     T --> G[GovernanceSource adapter]
     G --> GP[Golden Path]
     G --> P[Policies]
@@ -30,6 +34,8 @@ flowchart TD
     DE --> AT
     ES --> HD[Human decision package]
     HD --> AT
+    CI -. cannot override .-> D
+    BM -. cannot override .-> D
 ```
 
 ## Authority boundary
@@ -58,9 +64,32 @@ approved validator does it run the fixed validator implementation. It then re-ev
 schema-validated decision, and appends a digest-bearing audit record. Denied scope never reaches
 validator execution.
 
-## Provider boundary
+## Intelligence boundary
 
-The agent receives a configured Strands `Model`. The contest preference is Amazon Bedrock, while
-local tests and the public offline demo use an explicitly labeled deterministic model double. No
-default test or demo requires credentials, network access, or paid inference. Bedrock execution
-requires a separate CLI cost acknowledgement and has not been performed.
+Intelligence is subordinate to Governor and separate from deterministic governance. A typed
+`IntelligenceRequest` contains only a Governor-fixed objective, scope, and evidence. A provider may
+return a schema-valid architectural-risk report, but the report cannot contain a governance status,
+permission, policy, permit, or authority grant. Governor owns the `ADVISORY_ONLY` envelope.
+
+The private experimental composition binds that request to a no-argument Strands custom tool and
+implements the provider with `codex exec`. The CLI invocation uses an explicit ChatGPT-authenticated
+`CODEX_HOME`, ignores private configuration and rules, disables shell/web/image/subagent tools,
+uses a temporary working directory and read-only sandbox, and requests JSON Schema output. Codex
+does not choose paths or collect additional context.
+
+The boundary is demonstrated by a fixed synthetic spike and remains separate from the authoritative
+evaluation path. Promoting it to real-factory evidence requires a new, explicit privacy and
+evidence-selection decision.
+
+## Runtime provider compositions
+
+The main agent receives a configured Strands `Model`. Local tests and the public offline demo use an
+explicitly labeled deterministic model double. The optional contest composition can inject Amazon
+Bedrock and requires a separate CLI cost acknowledgement; it has not been performed.
+
+The private composition does not pretend that Codex CLI is a raw Strands model. It uses Codex as a
+specialized capability behind a purpose-built Strands tool. This preserves the supported semantics
+of both frameworks and avoids translating one agent protocol into another model-provider protocol.
+
+No default test or demo requires Codex, ChatGPT authentication, AWS credentials, network access, or
+paid inference. See [ADR-003](ADR-003-private-codex-intelligence.md).
