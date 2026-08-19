@@ -1,0 +1,47 @@
+version: 1
+name: governor-agent-demo-policy
+
+principles:
+  - explicit_authority_required
+  - evidence_before_allow
+  - escalate_ambiguity
+
+actors:
+  coding-agent:
+    allowed_paths:
+      - docs/**
+      - src/**
+    protected_paths:
+      - .github/workflows/**
+      - infra/**
+      - security/**
+    allowed_change_types:
+      - documentation
+      - application_code
+
+requirements:
+  documentation:
+    required_evidence:
+      - lint
+  application_code:
+    required_evidence:
+      - tests
+      - lint
+
+human_approval_required:
+  - dependency_major_version_change
+  - architecture_boundary_change
+  - production_deployment_change
+
+rules:
+  - id: protected-target
+    effect: block
+    description: Changes to protected paths are outside coding-agent authority.
+
+  - id: missing-required-evidence
+    effect: escalate
+    description: If required validation evidence is missing or inconclusive, require human review.
+
+  - id: reserved-human-decision
+    effect: escalate
+    description: High-impact changes explicitly reserved for human approval must not be auto-authorized.
