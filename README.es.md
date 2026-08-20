@@ -118,7 +118,7 @@ Consulta [`docs/architecture.md`](docs/architecture.md) para la arquitectura con
 **Hackathon:** Agents for Humans Hackathon  
 **Categoría:** Professional Agents  
 **Framework de agentes:** Strands Agents SDK  
-**Licencia:** MIT
+**Licencia:** Apache License 2.0
 
 Este README distingue deliberadamente entre comportamiento planificado y comportamiento implementado. Las capacidades solo se describirán como funcionales después de implementarlas y verificarlas.
 
@@ -137,9 +137,26 @@ Puede estar informada por experiencia previa en gobernanza, trazabilidad, eviden
 
 ---
 
+## Autoría, licencia e identidad del proyecto
+
+Governor Agent fue creado originalmente por **Patricio Castillo** para el **Agents for Humans Hackathon 2026**.
+
+Copyright © 2026 Patricio Castillo.
+
+El software de este repositorio se distribuye bajo la **Apache License, Version 2.0**. Consulta [`LICENSE`](LICENSE) y [`NOTICE`](NOTICE).
+
+La licencia Apache se aplica al software distribuido en este repositorio. No concede derechos de uso sobre nombres comerciales, marcas, marcas de servicio o nombres de producto, salvo lo necesario para una atribución razonable y para describir el origen del trabajo.
+
+Los futuros sistemas propietarios de GoNucleo, políticas privadas, integraciones e implementaciones quedan fuera del alcance de este repositorio y no están licenciados por su licencia open source.
+
+---
+
 ## Autor
 
 **Patricio Castillo**  
 Arquitectura y gobernanza de sistemas asistidos por IA · Agentes · Soberanía de datos · Documentación viva
 
+Creado y mantenido por **Patricio Castillo**.  
 Desarrollado bajo **GoNucleo IA**, laboratorio tecnológico independiente.
+
+[Portafolio profesional](https://github.com/gonuzzz-collab/mi-portafolio)
