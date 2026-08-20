@@ -1,6 +1,6 @@
 # Free Testing Access
 
-Status: draft pending a public repository URL.
+Status: public testing instructions.
 
 Judges can run the complete synthetic demo without an account, credentials, network access after
 installation, private data, AWS, or paid inference.
@@ -8,7 +8,7 @@ installation, private data, AWS, or paid inference.
 ## Install
 
 ```bash
-git clone <PUBLIC_REPOSITORY_URL>
+git clone --branch submission --single-branch https://github.com/gonuzzz-collab/governor-agent.git
 cd governor-agent
 uv sync --locked
 ```

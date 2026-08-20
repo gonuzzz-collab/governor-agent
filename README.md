@@ -6,8 +6,8 @@ Status: local Strands governance workflow implemented and demonstrated offline u
 factory. A Codex CLI advisory boundary and sanitized real-factory observation were validated only as
 private/local, strictly read-only compatibility experiments; neither is part of the public contest
 demonstration or production GoNucleo integration. Amazon Bedrock remains optional and deliberately
-untested until credentials and cost authorization exist. This revision is an MVP, not yet the
-hardened contest submission.
+untested until credentials and cost authorization exist. This revision is the contest-ready MVP
+submission candidate.
 
 ## Propósito
 
