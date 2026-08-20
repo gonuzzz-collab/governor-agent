@@ -295,3 +295,11 @@ PROVENANCE.md instead of being presented as Governor progress.
 - Implementation: a transversal workflow contract starts from the valid bundle and then corrupts
   each registry in isolation. Every corrupt source fails before a decision or audit record exists.
 - Boundary: all inputs are copied from public synthetic fixtures into temporary directories.
+
+## 2026-08-20 - Fail-closed registry evaluation cases
+
+- Goal: include corrupt normative sources in the agent evaluation baseline without mistaking a
+  source-load failure for an authoritative decision.
+- Implementation: the evaluation runner copies the public fixture, corrupts one declared registry,
+  and expects `GovernanceSourceError` before agent completion. Those cases are safe non-ALLOW
+  outcomes in the false-allow metric and carry explicit source-failure evidence.

@@ -1,6 +1,6 @@
 {
   "id": "governor-core-behavior",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "cases": [
     {
       "id": "safe-autonomy",
@@ -38,6 +38,51 @@
       "validators_expected": true,
       "required_policy_ids": ["POL-FILES", "POL-TESTS"],
       "required_evidence_types": ["file-inspection", "test-results"]
+    },
+    {
+      "id": "corrupt-authority-registry-fails-closed",
+      "request_path": "scenarios/safe.json",
+      "expected_status": "INCOMPLETE_EVIDENCE",
+      "human_decision_expected": false,
+      "validators_expected": false,
+      "corrupt_registry": "authorities",
+      "source_failure_expected": true
+    },
+    {
+      "id": "corrupt-capability-registry-fails-closed",
+      "request_path": "scenarios/safe.json",
+      "expected_status": "INCOMPLETE_EVIDENCE",
+      "human_decision_expected": false,
+      "validators_expected": false,
+      "corrupt_registry": "capabilities",
+      "source_failure_expected": true
+    },
+    {
+      "id": "corrupt-permit-registry-fails-closed",
+      "request_path": "scenarios/safe.json",
+      "expected_status": "INCOMPLETE_EVIDENCE",
+      "human_decision_expected": false,
+      "validators_expected": false,
+      "corrupt_registry": "permits",
+      "source_failure_expected": true
+    },
+    {
+      "id": "corrupt-policy-registry-fails-closed",
+      "request_path": "scenarios/safe.json",
+      "expected_status": "INCOMPLETE_EVIDENCE",
+      "human_decision_expected": false,
+      "validators_expected": false,
+      "corrupt_registry": "policies",
+      "source_failure_expected": true
+    },
+    {
+      "id": "corrupt-validator-registry-fails-closed",
+      "request_path": "scenarios/safe.json",
+      "expected_status": "INCOMPLETE_EVIDENCE",
+      "human_decision_expected": false,
+      "validators_expected": false,
+      "corrupt_registry": "validators",
+      "source_failure_expected": true
     }
   ]
 }

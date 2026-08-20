@@ -152,7 +152,7 @@ class CliScenarioTest(unittest.TestCase):
                 )
             text = output.getvalue()
         self.assertEqual(code, 0)
-        self.assertIn("Cases passed: 4/4", text)
+        self.assertIn("Cases passed: 9/9", text)
         self.assertIn("False allow rate: 0.000", text)
 
     def test_verify_audit_cli_confirms_digest(self) -> None:

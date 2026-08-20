@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from typing import Literal
 
 from governor_agent.domain import DecisionStatus
 from governor_agent.domain.paths import validate_relative_path
@@ -23,11 +24,21 @@ class EvaluationCase(BaseModel):
     required_policy_ids: frozenset[str] = Field(default_factory=frozenset)
     required_evidence_types: frozenset[str] = Field(default_factory=frozenset)
     expected_violation_code: str | None = None
+    corrupt_registry: (
+        Literal["authorities", "capabilities", "permits", "policies", "validators"] | None
+    ) = None
+    source_failure_expected: bool = False
 
     @field_validator("request_path")
     @classmethod
     def validate_request_path(cls, value: str) -> str:
         return validate_relative_path(value)
+
+    @model_validator(mode="after")
+    def source_failure_contract(self) -> "EvaluationCase":
+        if self.source_failure_expected != (self.corrupt_registry is not None):
+            raise ValueError("source-failure cases require exactly one corrupt_registry")
+        return self
 
 
 class EvaluationSuite(BaseModel):
@@ -51,6 +62,7 @@ class EvaluationCaseResult(BaseModel):
     human_interruption_correct: bool
     validator_behavior_correct: bool
     violation_correct: bool
+    source_failure_correct: bool = True
     hallucinated_policy_ids: tuple[str, ...]
     passed: bool
 

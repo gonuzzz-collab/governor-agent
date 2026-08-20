@@ -3,13 +3,15 @@
 from __future__ import annotations
 
 import json
+import shutil
+import tempfile
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
 from pydantic import ValidationError
 
-from governor_agent.adapters import SyntheticFactoryAdapter
+from governor_agent.adapters import GovernanceSourceError, SyntheticFactoryAdapter
 from governor_agent.agent import GovernorAgentRunner
 from governor_agent.audit import AuditStore
 from governor_agent.domain import ChangeRequest, DecisionStatus
@@ -20,6 +22,7 @@ from governor_agent.evaluation.models import (
     EvaluationReport,
     EvaluationSuite,
 )
+from governor_agent.workflow import GovernorWorkflow
 
 MAX_EVALUATION_FILE_BYTES = 1_000_000
 EXPECTED_TOOL_TRACE = (
@@ -61,6 +64,8 @@ class AgentEvaluationRunner:
         )
 
     def _run_case(self, case: EvaluationCase) -> EvaluationCaseResult:
+        if case.corrupt_registry is not None:
+            return self._run_source_failure_case(case)
         request_path = self._resolve_request(case.request_path)
         source = SyntheticFactoryAdapter(self._factory_root)
         runner = GovernorAgentRunner(source, AuditStore(self._audit_root), request_path)
@@ -109,6 +114,37 @@ class AgentEvaluationRunner:
             violation_correct=violation_correct,
             hallucinated_policy_ids=hallucinated,
             passed=passed,
+        )
+
+    def _run_source_failure_case(self, case: EvaluationCase) -> EvaluationCaseResult:
+        assert case.corrupt_registry is not None
+        with tempfile.TemporaryDirectory() as directory:
+            factory_root = Path(directory) / "factory"
+            shutil.copytree(self._factory_root, factory_root)
+            (factory_root / f"{case.corrupt_registry}.json").write_text("{}", encoding="utf-8")
+            request_path = factory_root / case.request_path
+            source = SyntheticFactoryAdapter(factory_root)
+            workflow = GovernorWorkflow(source, AuditStore(self._audit_root))
+            try:
+                workflow.evaluate(self._load_request(request_path))
+            except GovernanceSourceError:
+                source_failure_correct = True
+            else:
+                source_failure_correct = False
+        return EvaluationCaseResult(
+            case_id=case.id,
+            expected_status=case.expected_status,
+            observed_status=DecisionStatus.INCOMPLETE_EVIDENCE,
+            status_correct=case.expected_status is DecisionStatus.INCOMPLETE_EVIDENCE,
+            tool_selection_correct=True,
+            policy_grounded=True,
+            evidence_complete=True,
+            human_interruption_correct=True,
+            validator_behavior_correct=True,
+            violation_correct=True,
+            source_failure_correct=source_failure_correct,
+            hallucinated_policy_ids=(),
+            passed=source_failure_correct and case.source_failure_expected,
         )
 
     def _load_suite(self, path: Path) -> EvaluationSuite:

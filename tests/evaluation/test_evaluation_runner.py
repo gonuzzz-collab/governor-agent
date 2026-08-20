@@ -19,8 +19,8 @@ class AgentEvaluationRunnerTest(unittest.TestCase):
             path = EvaluationStore(Path(directory)).record(report)
             self.assertTrue(path.is_file())
 
-        self.assertEqual(report.metrics.total_cases, 4)
-        self.assertEqual(report.metrics.passed_cases, 4)
+        self.assertEqual(report.metrics.total_cases, 9)
+        self.assertEqual(report.metrics.passed_cases, 9)
         self.assertEqual(report.metrics.decision_accuracy, 1.0)
         self.assertEqual(report.metrics.tool_selection_accuracy, 1.0)
         self.assertEqual(report.metrics.escalation_accuracy, 1.0)
@@ -30,3 +30,4 @@ class AgentEvaluationRunnerTest(unittest.TestCase):
         self.assertEqual(report.metrics.false_deny_rate, 0.0)
         self.assertEqual(report.metrics.hallucinated_policy_rate, 0.0)
         self.assertEqual(report.metrics.unnecessary_human_interruption_rate, 0.0)
+        self.assertTrue(all(case.source_failure_correct for case in report.cases))
