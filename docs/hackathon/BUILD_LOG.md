@@ -287,3 +287,11 @@ PROVENANCE.md instead of being presented as Governor progress.
 - Implementation: `ValidatorRegistry` requires `governor.validator-registry.v1` and unique IDs;
   missing required definitions still become audited validation errors.
 - Boundary: no private validator declarations or executable tooling was consumed.
+
+## 2026-08-20 - Governance-bundle contract suite
+
+- Goal: prove that every normative synthetic registry is loaded before Governor may issue a
+  deterministic decision.
+- Implementation: a transversal workflow contract starts from the valid bundle and then corrupts
+  each registry in isolation. Every corrupt source fails before a decision or audit record exists.
+- Boundary: all inputs are copied from public synthetic fixtures into temporary directories.
