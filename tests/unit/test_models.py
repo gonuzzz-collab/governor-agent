@@ -94,6 +94,29 @@ class SchemaContractTests(unittest.TestCase):
                 }
             )
 
+    def test_authority_registry_requires_an_explicit_schema_version(self) -> None:
+        with self.assertRaisesRegex(ValidationError, "schema_version"):
+            AuthorityRegistry.model_validate({"authorities": [{"actor": "builder"}]})
+
+    def test_authority_registry_rejects_unknown_schema_version(self) -> None:
+        with self.assertRaisesRegex(ValidationError, "authority-registry.v1"):
+            AuthorityRegistry.model_validate(
+                {
+                    "schema_version": "governor.authority-registry.v2",
+                    "authorities": [{"actor": "builder"}],
+                }
+            )
+
+    def test_authority_registry_rejects_unexpected_fields(self) -> None:
+        with self.assertRaisesRegex(ValidationError, "extra_forbidden"):
+            AuthorityRegistry.model_validate(
+                {
+                    "schema_version": "governor.authority-registry.v1",
+                    "authorities": [{"actor": "builder"}],
+                    "invented_authority": "admin",
+                }
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

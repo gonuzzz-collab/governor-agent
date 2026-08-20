@@ -43,10 +43,11 @@ Codex may promote descriptive prose into policy.
 
 ## Synthetic authority-registry contract
 
-The public demo fixture has a typed `governor.authority-registry.v1` document in
-`authorities.json`. It contains an explicit, non-empty set of `AuthorityGrant` records and rejects
-duplicate actors before the adapter can resolve a grant. The synthetic adapter reads that document
-only; an absent, malformed, duplicate, or unmatched authority fails closed.
+The public demo fixture has a typed, explicitly versioned `governor.authority-registry.v1` document
+in `authorities.json`. It contains an explicit, non-empty set of `AuthorityGrant` records and
+rejects missing or unknown versions, unexpected fields, and duplicate actors before the adapter can
+resolve a grant. The synthetic adapter reads that document only; an absent, malformed, duplicate,
+legacy, or unmatched authority fails closed.
 
 This proves the Governor-side contract without interpreting private factory prose or implying that
 the observed factory has adopted it. The real inventory must continue to report

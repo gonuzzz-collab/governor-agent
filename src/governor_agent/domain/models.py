@@ -155,7 +155,7 @@ class AuthorityRegistry(BaseModel):
 
     model_config = MODEL_CONFIG
 
-    schema_version: Literal["governor.authority-registry.v1"] = "governor.authority-registry.v1"
+    schema_version: Literal["governor.authority-registry.v1"]
     authorities: tuple[AuthorityGrant, ...] = Field(min_length=1, max_length=256)
 
     @model_validator(mode="after")

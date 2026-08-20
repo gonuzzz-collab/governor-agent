@@ -244,3 +244,12 @@ PROVENANCE.md instead of being presented as Governor progress.
 - Boundary: the real-factory inventory remains fail-closed and continues to declare the missing
   real authority registry. No private source, path, content, credential, or factory file was read
   or changed for this increment.
+
+## 2026-08-20 - Explicit authority-registry schema gate
+
+- Goal: prevent an omitted schema version from being silently accepted as the current authority
+  contract.
+- Implementation: `schema_version` is required, not defaulted. The domain and adapter tests reject
+  legacy lists, missing or unknown versions, unexpected fields, and duplicate actors.
+- Boundary: the hardening applies only to the public synthetic contract; it neither reads nor
+  changes the private factory.
