@@ -25,6 +25,12 @@ The initial four-case baseline produced 4/4 passing cases, `1.000` decision/tool
 metrics, and `0.000` false allow, false deny, hallucinated policy, and unnecessary-interruption
 rates. These are fixture-suite results, not general production performance claims.
 
+The current `1.1.0` suite has 9/9 passing cases: four behavioral cases plus five corrupt-registry
+source-failure cases. The clean-clone run at commit `4248f08` preserved `1.000` decision/tool/
+policy/evidence metrics and `0.000` false allow, false deny, hallucinated-policy, and
+unnecessary-interruption rates. Source-load failures are safe non-ALLOW outcomes, never fabricated
+decisions.
+
 Each run appends its report under `.governor/evaluations/`. Evaluation changes require a suite
 version change when expected behavior changes materially.
 

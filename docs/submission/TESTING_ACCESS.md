@@ -37,7 +37,7 @@ provider boundary without reading any private repository.
 .venv/bin/governor eval-agent
 ```
 
-Expected results are `ALLOW`, `DENY`, and `ESCALATE`, followed by a 4/4 evaluation report. The
+Expected results are `ALLOW`, `DENY`, and `ESCALATE`, followed by a 9/9 evaluation report. The
 offline model is clearly labeled and exists to exercise the real Strands tool loop reproducibly.
 
 ## Inspect automation output

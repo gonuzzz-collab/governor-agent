@@ -8,13 +8,13 @@ Last reviewed: 2026-08-17
 | Local MVP | PASS | Real Strands tool loop and end-to-end workflow |
 | Deterministic governance | PASS | Domain and scenario suites |
 | Safety | PASS WITH RISK | Security tests; Bedrock behavior not evaluated |
-| Reproducibility | PASS | Commit `601b633` clean clone; locked Python 3.11/3.12 gates; Strands demo and eval |
+| Reproducibility | PASS | Commit `4248f08` clean clone; locked gate, 103 tests, Strands demo, and 9/9 eval |
 | Public CI definition | PASS LOCALLY / NOT HOSTED | SHA-pinned read-only workflow; Python 3.11/3.12 clean-clone gates pass; GitHub run requires publication |
 | Public synthetic demo | PASS | Safe, deny, escalate |
 | Apache-2.0 license | PASS | Top-level LICENSE |
 | English README | PASS | Public instructions and boundaries |
 | Architecture diagram | PASS | Mermaid diagram in docs/architecture |
-| Agent evaluations | PASS | Four-case offline baseline |
+| Agent evaluations | PASS | 9-case offline baseline; 9/9, false allow/deny 0.000 |
 | Sanitized private evidence boundary | PASS WITH LIMITS | Typed classification, deterministic policy, secret/path controls, audit, and read-only real observation; complete governance registries remain pending |
 | Provenance disclosure | PASS FOR LOCAL | Final human/IP review pending |
 | Security review | PASS WITH OPEN CLOUD ITEMS | No cloud call or deployment tested |

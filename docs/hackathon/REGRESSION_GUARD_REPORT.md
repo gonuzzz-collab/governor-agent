@@ -26,6 +26,8 @@ wrapper integration mismatch, not a test failure. It remains recorded as a faile
 - Real CLI runtime: safe, deny, and escalation outcomes matched their contracts.
 - Agent evaluation: 4/4 cases, zero false allow/deny in the fixture suite.
 - Clean clone in `/tmp`: lock installation, validation, agent demo, and evaluations PASS.
+- Current clean clone at `4248f08`: 103 tests, agent demo ALLOW/DENY/ESCALATE, evaluation 9/9,
+  false allow/deny 0.000.
 - Visual validation: not applicable; product is CLI-only.
 - Docker/runtime rebuild: not applicable; no container or service exists.
 

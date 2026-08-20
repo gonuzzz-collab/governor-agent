@@ -33,6 +33,10 @@ A subsequent no-hardlink clone of commit `601b633` passed the locked gate on Pyt
 3.12.13. The Python 3.11 run also passed all three Strands scenarios and the 4/4 behavior evaluation;
 the clone retained a clean tracked worktree.
 
+The current clean-clone rehearsal at commit `4248f08` passed the locked gate with 103 tests,
+the three Strands scenarios, and the versioned 9/9 evaluation. False allow and false deny rates
+remained 0.000.
+
 ## Open risks
 
 - A real Bedrock model has not been evaluated for tool-selection or prompt-injection behavior.

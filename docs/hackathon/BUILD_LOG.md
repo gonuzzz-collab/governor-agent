@@ -303,3 +303,11 @@ PROVENANCE.md instead of being presented as Governor progress.
 - Implementation: the evaluation runner copies the public fixture, corrupts one declared registry,
   and expects `GovernanceSourceError` before agent completion. Those cases are safe non-ALLOW
   outcomes in the false-allow metric and carry explicit source-failure evidence.
+
+## 2026-08-20 - Clean-clone 9/9 reproducibility rehearsal
+
+- Commit: `4248f08`.
+- Result: a no-hardlink temporary clone installed the locked environment, passed 103 tests, ran
+  ALLOW/DENY/ESCALATE, and produced 9/9 evaluation cases with false allow/deny rates of 0.000.
+- Boundary: the original worktree remained clean; no remote, private factory, cloud service, or
+  paid inference was used.
