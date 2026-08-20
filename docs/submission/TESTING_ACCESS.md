@@ -28,7 +28,8 @@ integration test is skipped. The gate needs neither AWS credentials nor a ChatGP
 
 Evidence-privacy and real-adapter tests create only temporary synthetic factories. They verify
 classification, minimization, secrets, path confinement, audit redaction, and the sanitized-only
-provider boundary without reading any private repository.
+provider boundary without reading GoNucleo or any other private repository. The private/local
+real-factory compatibility experiment is not part of the judging flow.
 
 ## Demonstrate
 
@@ -49,5 +50,5 @@ offline model is clearly labeled and exists to exercise the real Strands tool lo
 ```
 
 No production system or private factory is required. Testing access will remain free through the
-official judging period. Optional Bedrock execution and private Codex-account integration are not
-part of free judging access.
+official judging period. Optional Bedrock execution, private Codex-account integration, and any
+real-factory integration are not part of free judging access.

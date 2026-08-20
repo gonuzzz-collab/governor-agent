@@ -55,14 +55,19 @@ minimum unnecessary human interruption.
 
 Local CLI, Strands agent loop, deterministic governance domain, synthetic factory, permits,
 policies, approved validators, evidence, append-only audit records, digest verification, agent
-evaluations, prompt-injection/path-safety tests, and aggregate read-only real-factory inventory.
+evaluations, prompt-injection/path-safety tests, and synthetic evidence/privacy scenarios. A
+privacy-preserving read-only adapter contract was validated privately/local against pre-existing
+factory context, but is excluded from the public demonstrated feature set.
 
 ## Honest limitations
 
-The public demo uses a synthetic factory and deterministic offline model. Amazon Bedrock provider
-injection exists but has not been called, evaluated, or claimed as demonstrated. AgentCore is not
-implemented. The real factory adapter is inventory-only because complete machine-readable
-capability, policy, authority, and persistent permit contracts do not yet exist.
+The public demo uses only a synthetic factory and deterministic offline model. Amazon Bedrock
+provider injection exists but has not been called or evaluated and is not claimed as demonstrated.
+AgentCore is not implemented or demonstrated. The real-factory adapter and sanitized evidence were
+privately validated as read-only compatibility experiments only; they are not production GoNucleo
+integration or part of the public contest demo. Complete capability, policy, authority, and
+persistent permit contracts for governing a real factory remain absent, as does any real-project
+mutation authority.
 
 ## Pre-existing work disclosure
 

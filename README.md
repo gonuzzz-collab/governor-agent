@@ -2,14 +2,12 @@
 
 Governor is a governance agent for AI-assisted software factories.
 
-Status: local Strands governance workflow implemented and demonstrated offline. An experimental,
-opt-in Codex CLI advisory boundary is also implemented and demonstrated using existing ChatGPT
-authentication. Amazon Bedrock remains optional and deliberately untested until credentials and
-cost authorization exist. This revision is an MVP, not yet the hardened contest submission.
-
-A sanitized evidence boundary is now implemented and demonstrated against the real factory in
-read-only mode. The observation exposes only classified aggregate facts and fails closed while
-mandatory machine-readable governance registries remain unavailable.
+Status: local Strands governance workflow implemented and demonstrated offline using the synthetic
+factory. A Codex CLI advisory boundary and sanitized real-factory observation were validated only as
+private/local, strictly read-only compatibility experiments; neither is part of the public contest
+demonstration or production GoNucleo integration. Amazon Bedrock remains optional and deliberately
+untested until credentials and cost authorization exist. This revision is an MVP, not yet the
+hardened contest submission.
 
 ## Propósito
 
@@ -71,7 +69,8 @@ The spike sends only synthetic evidence and returns an `ADVISORY_ONLY` architect
 It does not read the repository or alter ALLOW/DENY/ESCALATE. See the
 [local Codex spike guide](docs/demo/CODEX_LOCAL_SPIKE.md).
 
-Extract a real-factory readiness observation without exposing project content:
+Private/local compatibility experiment only (not part of the public contest demonstration): extract
+a real-factory readiness observation without exposing project content:
 
     .venv/bin/governor inspect-factory-evidence /path/to/factory \
       --audit-dir /safe/path/outside/factory \
@@ -90,7 +89,8 @@ Verify one append-only decision record:
 
     .venv/bin/governor verify-audit .governor/runs/<run-id>.json
 
-Inspect only aggregate, fixed metadata from a local GoNucleo factory:
+Private/local compatibility experiment only (not part of the public contest demonstration): inspect
+only aggregate, fixed metadata from a local GoNucleo factory:
 
     .venv/bin/governor inspect-factory /path/to/gonucleo
 
@@ -169,23 +169,23 @@ Apache-2.0. Third-party dependencies retain their own licenses.
 - Implemented and demonstrated: typed domain, deterministic gates, synthetic factory adapter,
   approved validators, append-only local audit records, CLI, safe/deny/escalate scenarios, and a
   real Strands `Agent` tool loop with structured output and tool hooks.
-- Implemented and locally demonstrated as an experimental vertical slice: a purpose-built Strands
+- Validated experimentally in private/local runtime only (not public contest demonstration): a purpose-built Strands
   intelligence tool backed by stable `codex exec`, existing ChatGPT authentication, explicit
   `CODEX_HOME`, disabled execution/search tools, read-only sandbox, and schema-validated advisory
   output. Default tests use fakes and the local integration test is opt-in.
-- Implemented and demonstrated: typed PUBLIC/INTERNAL/CONFIDENTIAL/SECRET evidence, deterministic
-  external-processing policy, path/identifier privacy, bounded secret detection, sanitized-only
-  Codex requests, redacted evidence audit, and a fixed-source real-factory observation adapter.
-- Demonstrated read-only on the real factory: sanitized aggregate evidence, unchanged factory Git
-  state, honest `INCOMPLETE_EVIDENCE`, and one evidence-backed Codex advisory that could not alter
-  that result.
+- Demonstrated publicly: typed PUBLIC/INTERNAL/CONFIDENTIAL/SECRET evidence, deterministic
+  external-processing policy, path/identifier privacy, bounded secret detection, synthetic
+  evidence/privacy scenarios, and redacted evidence audit.
+- Validated experimentally in private/local runtime only: sanitized-only Codex requests and a
+  fixed-source, strictly read-only real-factory observation adapter. This compatibility experiment
+  is not the public contest demonstration and is not production GoNucleo integration.
 - Implemented but not remotely demonstrated: injected Amazon Bedrock provider. The CLI requires
   `--allow-paid-inference` before it can make a Bedrock call.
 - Implemented and demonstrated hardening: versioned agent evaluations, audit digest verification,
   tamper detection, and safe normal/verbose/debug output.
-- Implemented and locally demonstrated: privacy-preserving real-factory inventory adapter. Full
-  governance evaluation remains fail-closed until the factory defines machine-readable capability,
-  policy, authority, and persistent permit contracts.
+- Validated experimentally in private/local runtime only: privacy-preserving real-factory inventory
+  adapter. Full governance of a real factory remains fail-closed until that factory defines
+  machine-readable capability, policy, authority, and persistent permit contracts.
 - Implemented and demonstrated hardening: required-validator failures become audited, fail-closed
   decisions; locked static checks and the full suite pass on Python 3.11 and 3.12.
 - Assessed and deferred: optional AgentCore Runtime deployment until Bedrock behavior, identity,

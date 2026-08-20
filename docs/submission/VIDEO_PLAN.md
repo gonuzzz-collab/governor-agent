@@ -17,7 +17,7 @@ Coding agents optimize for completing a change. Governor optimizes for preservin
 | 2:10-3:35 | `agent-demo escalate` | Tests pass, but a second source of truth creates an ownership decision. Governor refuses to invent authority and packages options and risks. |
 | 3:35-4:10 | Strands trace and structured JSON | Show `Agent`, three custom tools, hooks, structured output, and the model/domain consistency guard. |
 | 4:10-4:35 | `verify-audit` and `eval-agent` | Evidence is inspectable; fixture baseline is 9/9 with zero false allow/deny. |
-| 4:35-4:55 | Real-factory aggregate inventory | Show post-contest utility and the honest fail-closed gap without exposing private projects. |
+| 4:35-4:55 | Architecture boundary: synthetic factory → Governor → future real-factory adapter | The public demonstration uses a synthetic factory. A read-only compatibility adapter was privately validated against pre-existing factory context, but production factory integration remains fail-closed and outside this contest demonstration. |
 | 4:55-5:00 | Closing line | Safe autonomy requires explicit authority, evidence, and escalation. |
 
 ## Recording constraints
@@ -27,4 +27,6 @@ Coding agents optimize for completing a change. Governor optimizes for preservin
 - Do not display absolute personal paths, Git remotes, credentials, parent worktree status, or
   private project identifiers.
 - Use the synthetic factory for all detailed screens.
+- Do not show GoNucleo or a pre-existing factory execution as a demonstrated project feature; discuss
+  the real-factory adapter only as a private/local compatibility experiment.
 - Label offline model results and never imply Bedrock or AgentCore was demonstrated.
