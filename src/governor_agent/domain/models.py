@@ -262,6 +262,22 @@ class Policy(BaseModel):
         return self
 
 
+class PolicyRegistry(BaseModel):
+    """Versioned policies from one explicit normative source."""
+
+    model_config = MODEL_CONFIG
+
+    schema_version: Literal["governor.policy-registry.v1"]
+    policies: tuple[Policy, ...] = Field(min_length=1, max_length=512)
+
+    @model_validator(mode="after")
+    def unique_policy_ids(self) -> "PolicyRegistry":
+        policy_ids = tuple(policy.id for policy in self.policies)
+        if len(set(policy_ids)) != len(policy_ids):
+            raise ValueError("policy registry must not contain duplicate policy IDs")
+        return self
+
+
 class EvidenceItem(BaseModel):
     model_config = MODEL_CONFIG
 

@@ -1,23 +1,25 @@
-[
-  {
+{
+  "schema_version": "governor.policy-registry.v1",
+  "policies": [
+    {
     "id": "POL-PRODUCTION-SCOPE",
     "kind": "forbidden_path",
     "description": "Production infrastructure changes require a separate human-owned workflow.",
     "paths": ["infrastructure/production/**"]
-  },
-  {
+    },
+    {
     "id": "POL-SECRETS",
     "kind": "forbidden_path",
     "description": "Secret-bearing environment files are outside this capability.",
     "paths": [".env", ".env.*", "secrets/**"]
-  },
-  {
+    },
+    {
     "id": "POL-TESTS",
     "kind": "required_validator",
     "description": "Configuration changes require the approved unit test validator.",
     "required_validator": "python-unit-tests"
-  },
-  {
+    },
+    {
     "id": "POL-FILES",
     "kind": "required_validator",
     "description": "Every declared change file must exist inside the governed project.",
@@ -34,5 +36,6 @@
       "migrate ownership with an explicit migration plan",
       "define and govern synchronization semantics"
     ]
-  }
-]
+    }
+  ]
+}

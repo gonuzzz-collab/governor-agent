@@ -63,6 +63,10 @@ which resolves to no permit and is therefore denied by deterministic evaluation.
 or legacy schemas and duplicate permit or request IDs. The private factory permit registry remains
 absent and is not inferred from workflow tools.
 
+The fixture's `governor.policy-registry.v1` contract requires an explicit version, at least one
+policy, and unique policy IDs before policies reach evaluation. Missing, legacy, empty, or duplicate
+policy sources fail closed; the real factory policy registry remains absent.
+
 ## Golden Path analysis
 
 Confirmed machine-readable facts are catalog adoption state and the project automation manifests.

@@ -271,3 +271,11 @@ PROVENANCE.md instead of being presented as Governor progress.
 - Implementation: `PermitRegistry` requires `governor.permit-registry.v1`, rejects duplicate permit
   and request IDs, and permits an empty collection so absence resolves deterministically to DENY.
 - Boundary: no private Change Permit tool output or factory source was parsed, copied, or changed.
+
+## 2026-08-20 - Versioned synthetic policy registry
+
+- Goal: prevent the public demo from silently evaluating a request with an absent policy source.
+- Implementation: `PolicyRegistry` requires `governor.policy-registry.v1`, at least one policy, and
+  unique policy IDs before policies can enter deterministic evaluation.
+- Boundary: the private factory policy registry is still absent; no private policy prose was parsed
+  or treated as authoritative.

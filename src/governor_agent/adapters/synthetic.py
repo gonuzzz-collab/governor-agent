@@ -24,6 +24,7 @@ from governor_agent.domain import (
     ChangeRequest,
     Policy,
     PermitRegistry,
+    PolicyRegistry,
 )
 
 T = TypeVar("T", bound=BaseModel)
@@ -69,7 +70,7 @@ class SyntheticFactoryAdapter:
 
     def get_policies(self, request: ChangeRequest) -> tuple[Policy, ...]:
         del request
-        return self._read_models("policies.json", Policy)
+        return self._read_model("policies.json", PolicyRegistry).policies
 
     def get_permit(self, request_id: str) -> ChangePermit | None:
         registry = self._read_model("permits.json", PermitRegistry)

@@ -118,3 +118,14 @@ class SyntheticAdapterContractTest(unittest.TestCase):
             )
             source = SyntheticFactoryAdapter(copied)
             self.assertIsNone(source.get_permit("request"))
+
+    def test_legacy_policy_list_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            copied = Path(directory) / "factory"
+            shutil.copytree(FACTORY, copied)
+            (copied / "policies.json").write_text(json.dumps([]), encoding="utf-8")
+            source = SyntheticFactoryAdapter(copied)
+            with (copied / "scenarios" / "safe.json").open(encoding="utf-8") as stream:
+                request = ChangeRequest.model_validate(json.load(stream))
+            with self.assertRaisesRegex(GovernanceSourceError, "invalid policies.json"):
+                source.get_policies(request)

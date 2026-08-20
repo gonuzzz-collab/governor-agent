@@ -12,6 +12,7 @@ from governor_agent.domain.models import (
     ChangeRequest,
     Policy,
     PolicyKind,
+    PolicyRegistry,
     PermitRegistry,
 )
 from governor_agent.domain.paths import UnsafePathError, matches_patterns, validate_relative_path
@@ -172,6 +173,28 @@ class SchemaContractTests(unittest.TestCase):
             {"schema_version": "governor.permit-registry.v1", "permits": []}
         )
         self.assertEqual(registry.permits, ())
+
+    def test_policy_registry_rejects_duplicate_policy_ids(self) -> None:
+        with self.assertRaisesRegex(ValidationError, "duplicate policy IDs"):
+            PolicyRegistry.model_validate(
+                {
+                    "schema_version": "governor.policy-registry.v1",
+                    "policies": [
+                        {
+                            "id": "policy-a",
+                            "kind": "forbidden_path",
+                            "description": "Block source changes.",
+                            "paths": ["src/**"],
+                        },
+                        {
+                            "id": "policy-a",
+                            "kind": "forbidden_path",
+                            "description": "Block test changes.",
+                            "paths": ["tests/**"],
+                        },
+                    ],
+                }
+            )
 
 
 if __name__ == "__main__":
