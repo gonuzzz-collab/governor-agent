@@ -41,6 +41,17 @@ scaffolding, but it is not automatically a general change policy. Factory status
 documents describe observed state. The capability analysis is not a registry. Neither Governor nor
 Codex may promote descriptive prose into policy.
 
+## Synthetic authority-registry contract
+
+The public demo fixture has a typed `governor.authority-registry.v1` document in
+`authorities.json`. It contains an explicit, non-empty set of `AuthorityGrant` records and rejects
+duplicate actors before the adapter can resolve a grant. The synthetic adapter reads that document
+only; an absent, malformed, duplicate, or unmatched authority fails closed.
+
+This proves the Governor-side contract without interpreting private factory prose or implying that
+the observed factory has adopted it. The real inventory must continue to report
+`authority_registry` as missing until a separately authorized, read-only source exists.
+
 ## Golden Path analysis
 
 Confirmed machine-readable facts are catalog adoption state and the project automation manifests.

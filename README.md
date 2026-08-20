@@ -193,5 +193,8 @@ Apache-2.0. Third-party dependencies retain their own licenses.
 - Assessed and deferred: direct Codex MCP consumption after the local locked-version spike exposed
   notification/result interoperability errors; custom model provider and experimental app-server
   integration add unnecessary coupling for this slice.
-- Next human gate: decide whether to define the missing machine-readable authority registry before
-  expanding the real observation beyond aggregate readiness. Bedrock and publication remain closed.
+- Implemented for the public synthetic demo: `authorities.json` is a versioned
+  `governor.authority-registry.v1` contract with one unique, explicit grant per actor.
+  The real factory remains unchanged and fail-closed: a separate human decision and read-only
+  adapter design are required before any real authority source is introduced. Bedrock and
+  publication remain closed.

@@ -34,3 +34,20 @@ class SyntheticAdapterContractTest(unittest.TestCase):
                 request = ChangeRequest.model_validate(json.load(stream))
             with self.assertRaisesRegex(GovernanceSourceError, "invalid policies.json"):
                 source.get_policies(request)
+
+    def test_duplicate_authority_grants_fail_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            copied = Path(directory) / "factory"
+            shutil.copytree(FACTORY, copied)
+            (copied / "authorities.json").write_text(
+                json.dumps(
+                    {
+                        "schema_version": "governor.authority-registry.v1",
+                        "authorities": [{"actor": "builder"}, {"actor": "builder"}],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            source = SyntheticFactoryAdapter(copied)
+            with self.assertRaisesRegex(GovernanceSourceError, "invalid authorities.json"):
+                source.get_authority("builder")

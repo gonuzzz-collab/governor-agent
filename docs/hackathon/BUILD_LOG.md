@@ -233,3 +233,14 @@ PROVENANCE.md instead of being presented as Governor progress.
   though Governor has no deployed runtime change and refreshed one ignored frontend build directory
   outside Governor. No new tracked factory diff was detected. Cleanup was deliberately not attempted
   because deleting a pre-existing ignored artifact would be destructive and outside this permit.
+
+## 2026-08-20 - Versioned synthetic authority registry
+
+- Goal: make the public demo's actor authority source explicit and schema-versioned without
+  modifying or inferring anything from the private factory.
+- Implementation: `AuthorityRegistry` wraps `AuthorityGrant` records under
+  `governor.authority-registry.v1`; duplicate actors are rejected before the read-only synthetic
+  adapter resolves an authority. The fixture and contract tests cover the valid and duplicate cases.
+- Boundary: the real-factory inventory remains fail-closed and continues to declare the missing
+  real authority registry. No private source, path, content, credential, or factory file was read
+  or changed for this increment.

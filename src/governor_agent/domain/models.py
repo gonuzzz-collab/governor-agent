@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -148,6 +148,22 @@ class AuthorityGrant(BaseModel):
         if value is not None and value.tzinfo is None:
             raise ValueError("expires_at must include a timezone")
         return value
+
+
+class AuthorityRegistry(BaseModel):
+    """Versioned, authority-bearing grants from one explicit normative source."""
+
+    model_config = MODEL_CONFIG
+
+    schema_version: Literal["governor.authority-registry.v1"] = "governor.authority-registry.v1"
+    authorities: tuple[AuthorityGrant, ...] = Field(min_length=1, max_length=256)
+
+    @model_validator(mode="after")
+    def unique_actors(self) -> "AuthorityRegistry":
+        actors = tuple(authority.actor for authority in self.authorities)
+        if len(set(actors)) != len(actors):
+            raise ValueError("authority registry must not contain duplicate actors")
+        return self
 
 
 class ChangePermit(BaseModel):

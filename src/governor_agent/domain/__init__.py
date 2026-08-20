@@ -3,6 +3,7 @@
 from governor_agent.domain.evaluator import GovernanceEvaluator
 from governor_agent.domain.models import (
     AuthorityGrant,
+    AuthorityRegistry,
     Capability,
     ChangePermit,
     ChangeRequest,
@@ -25,6 +26,7 @@ from governor_agent.domain.models import (
 
 __all__ = [
     "AuthorityGrant",
+    "AuthorityRegistry",
     "Capability",
     "ChangePermit",
     "ChangeRequest",

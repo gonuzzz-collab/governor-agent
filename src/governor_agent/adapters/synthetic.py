@@ -17,6 +17,7 @@ from governor_agent.adapters.contracts import (
 )
 from governor_agent.domain import (
     AuthorityGrant,
+    AuthorityRegistry,
     Capability,
     ChangePermit,
     ChangeRequest,
@@ -50,7 +51,11 @@ class SyntheticFactoryAdapter:
         return self._find_one("capabilities.json", Capability, "id", capability_id)
 
     def get_authority(self, actor: str) -> AuthorityGrant:
-        return self._find_one("authorities.json", AuthorityGrant, "actor", actor)
+        registry = self._read_model("authorities.json", AuthorityRegistry)
+        matches = [authority for authority in registry.authorities if authority.actor == actor]
+        if len(matches) != 1:
+            raise GovernanceSourceError(f"expected exactly one AuthorityGrant with actor={actor!r}")
+        return matches[0]
 
     def get_policies(self, request: ChangeRequest) -> tuple[Policy, ...]:
         del request

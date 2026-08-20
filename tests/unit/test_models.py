@@ -6,6 +6,7 @@ from datetime import datetime
 from pydantic import ValidationError
 
 from governor_agent.domain.models import (
+    AuthorityRegistry,
     ChangePermit,
     ChangeRequest,
     Policy,
@@ -79,6 +80,18 @@ class SchemaContractTests(unittest.TestCase):
                 environment="local",
                 expires_at=datetime(2026, 8, 20),
                 rollback="Revert the file change.",
+            )
+
+    def test_authority_registry_rejects_duplicate_actors(self) -> None:
+        with self.assertRaisesRegex(ValidationError, "duplicate actors"):
+            AuthorityRegistry.model_validate(
+                {
+                    "schema_version": "governor.authority-registry.v1",
+                    "authorities": [
+                        {"actor": "builder"},
+                        {"actor": "builder"},
+                    ],
+                }
             )
 
 
