@@ -66,6 +66,12 @@ The model helps inspect and explain.
 
 **The model does not own governance authority.**
 
+## Who it's for
+
+Governor is designed for developers, software architects, makers, and small engineering teams using AI coding agents to make increasingly consequential changes to real software systems.
+
+It is especially useful when teams want agents to automate routine work without giving them unrestricted authority over architecture, data ownership, production scope, or other decisions that should remain human.
+
 ## How Strands is used
 
 Governor is built around one central Strands `Agent`.
