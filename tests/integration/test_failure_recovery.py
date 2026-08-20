@@ -76,7 +76,7 @@ class FailureRecoveryTest(unittest.TestCase):
             capability_path = factory / "capabilities.json"
             with capability_path.open(encoding="utf-8") as stream:
                 capabilities = json.load(stream)
-            capabilities[0]["evidence_required"].append("security-review")
+            capabilities["capabilities"][0]["evidence_required"].append("security-review")
             with capability_path.open("w", encoding="utf-8") as stream:
                 json.dump(capabilities, stream)
             audit = AuditStore(Path(directory) / "audit")

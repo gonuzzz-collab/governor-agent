@@ -53,6 +53,11 @@ This proves the Governor-side contract without interpreting private factory pros
 the observed factory has adopted it. The real inventory must continue to report
 `authority_registry` as missing until a separately authorized, read-only source exists.
 
+The public fixture also defines `governor.capability-registry.v1` in `capabilities.json`. It
+requires an explicit version and one unique capability ID because the current `GovernanceSource`
+contract resolves capabilities by ID. Missing, legacy, malformed, or ambiguous capabilities fail
+closed; the private factory capability inventory remains absent.
+
 ## Golden Path analysis
 
 Confirmed machine-readable facts are catalog adoption state and the project automation manifests.

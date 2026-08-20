@@ -19,6 +19,7 @@ from governor_agent.domain import (
     AuthorityGrant,
     AuthorityRegistry,
     Capability,
+    CapabilityRegistry,
     ChangePermit,
     ChangeRequest,
     Policy,
@@ -48,7 +49,15 @@ class SyntheticFactoryAdapter:
         return self._read_model("golden_path.json", GoldenPathDocument)
 
     def get_capability(self, capability_id: str) -> Capability:
-        return self._find_one("capabilities.json", Capability, "id", capability_id)
+        registry = self._read_model("capabilities.json", CapabilityRegistry)
+        matches = [
+            capability for capability in registry.capabilities if capability.id == capability_id
+        ]
+        if len(matches) != 1:
+            raise GovernanceSourceError(
+                f"expected exactly one Capability with id={capability_id!r}"
+            )
+        return matches[0]
 
     def get_authority(self, actor: str) -> AuthorityGrant:
         registry = self._read_model("authorities.json", AuthorityRegistry)

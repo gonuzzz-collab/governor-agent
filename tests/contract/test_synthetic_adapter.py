@@ -73,3 +73,25 @@ class SyntheticAdapterContractTest(unittest.TestCase):
             source = SyntheticFactoryAdapter(copied)
             with self.assertRaisesRegex(GovernanceSourceError, "invalid authorities.json"):
                 source.get_authority("builder")
+
+    def test_legacy_capability_list_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            copied = Path(directory) / "factory"
+            shutil.copytree(FACTORY, copied)
+            (copied / "capabilities.json").write_text(
+                json.dumps([{"id": "change"}]), encoding="utf-8"
+            )
+            source = SyntheticFactoryAdapter(copied)
+            with self.assertRaisesRegex(GovernanceSourceError, "invalid capabilities.json"):
+                source.get_capability("change")
+
+    def test_missing_capability_schema_version_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            copied = Path(directory) / "factory"
+            shutil.copytree(FACTORY, copied)
+            (copied / "capabilities.json").write_text(
+                json.dumps({"capabilities": []}), encoding="utf-8"
+            )
+            source = SyntheticFactoryAdapter(copied)
+            with self.assertRaisesRegex(GovernanceSourceError, "invalid capabilities.json"):
+                source.get_capability("change")

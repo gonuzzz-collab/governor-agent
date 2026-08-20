@@ -7,6 +7,7 @@ from pydantic import ValidationError
 
 from governor_agent.domain.models import (
     AuthorityRegistry,
+    CapabilityRegistry,
     ChangePermit,
     ChangeRequest,
     Policy,
@@ -114,6 +115,28 @@ class SchemaContractTests(unittest.TestCase):
                     "schema_version": "governor.authority-registry.v1",
                     "authorities": [{"actor": "builder"}],
                     "invented_authority": "admin",
+                }
+            )
+
+    def test_capability_registry_rejects_duplicate_capability_ids(self) -> None:
+        with self.assertRaisesRegex(ValidationError, "duplicate capability IDs"):
+            CapabilityRegistry.model_validate(
+                {
+                    "schema_version": "governor.capability-registry.v1",
+                    "capabilities": [
+                        {
+                            "id": "change",
+                            "version": "1.0.0",
+                            "lifecycle": "shared",
+                            "allowed_actions": ["change"],
+                        },
+                        {
+                            "id": "change",
+                            "version": "2.0.0",
+                            "lifecycle": "shared",
+                            "allowed_actions": ["change"],
+                        },
+                    ],
                 }
             )
 

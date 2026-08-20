@@ -128,6 +128,22 @@ class Capability(BaseModel):
     evidence_required: frozenset[str] = Field(default_factory=frozenset)
 
 
+class CapabilityRegistry(BaseModel):
+    """Versioned, authority-bearing capabilities from one explicit normative source."""
+
+    model_config = MODEL_CONFIG
+
+    schema_version: Literal["governor.capability-registry.v1"]
+    capabilities: tuple[Capability, ...] = Field(min_length=1, max_length=256)
+
+    @model_validator(mode="after")
+    def unique_capability_ids(self) -> "CapabilityRegistry":
+        capability_ids = tuple(capability.id for capability in self.capabilities)
+        if len(set(capability_ids)) != len(capability_ids):
+            raise ValueError("capability registry must not contain duplicate capability IDs")
+        return self
+
+
 class AuthorityGrant(BaseModel):
     model_config = MODEL_CONFIG
 
