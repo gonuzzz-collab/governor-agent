@@ -1,12 +1,15 @@
-[
-  {
+{
+  "schema_version": "governor.validator-registry.v1",
+  "validators": [
+    {
     "id": "requested-files-exist",
     "kind": "files_exist",
     "timeout_seconds": 5
-  },
-  {
+    },
+    {
     "id": "python-unit-tests",
     "kind": "python_unittest",
     "timeout_seconds": 20
-  }
-]
+    }
+  ]
+}

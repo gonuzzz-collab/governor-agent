@@ -279,3 +279,11 @@ PROVENANCE.md instead of being presented as Governor progress.
   unique policy IDs before policies can enter deterministic evaluation.
 - Boundary: the private factory policy registry is still absent; no private policy prose was parsed
   or treated as authoritative.
+
+## 2026-08-20 - Versioned synthetic validator registry
+
+- Goal: make approved validator definitions explicit while preserving the existing fail-closed
+  recovery path for an unavailable required validator.
+- Implementation: `ValidatorRegistry` requires `governor.validator-registry.v1` and unique IDs;
+  missing required definitions still become audited validation errors.
+- Boundary: no private validator declarations or executable tooling was consumed.

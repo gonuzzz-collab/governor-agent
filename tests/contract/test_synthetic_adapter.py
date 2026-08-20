@@ -129,3 +129,14 @@ class SyntheticAdapterContractTest(unittest.TestCase):
                 request = ChangeRequest.model_validate(json.load(stream))
             with self.assertRaisesRegex(GovernanceSourceError, "invalid policies.json"):
                 source.get_policies(request)
+
+    def test_legacy_validator_list_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            copied = Path(directory) / "factory"
+            shutil.copytree(FACTORY, copied)
+            (copied / "validators.json").write_text(
+                json.dumps([{"id": "files", "kind": "files_exist"}]), encoding="utf-8"
+            )
+            source = SyntheticFactoryAdapter(copied)
+            with self.assertRaisesRegex(GovernanceSourceError, "invalid validators.json"):
+                source.get_validator("files")

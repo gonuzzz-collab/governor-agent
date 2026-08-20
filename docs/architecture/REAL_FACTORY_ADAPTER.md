@@ -67,6 +67,10 @@ The fixture's `governor.policy-registry.v1` contract requires an explicit versio
 policy, and unique policy IDs before policies reach evaluation. Missing, legacy, empty, or duplicate
 policy sources fail closed; the real factory policy registry remains absent.
 
+The fixture's `governor.validator-registry.v1` contract rejects missing or legacy schemas and
+duplicate validator IDs. An empty registry is valid, but a required validator then becomes an
+audited validation error rather than an invented definition.
+
 ## Golden Path analysis
 
 Confirmed machine-readable facts are catalog adoption state and the project automation manifests.

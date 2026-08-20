@@ -54,7 +54,14 @@ class FailureRecoveryTest(unittest.TestCase):
                 validators = json.load(stream)
             with validators_path.open("w", encoding="utf-8") as stream:
                 json.dump(
-                    [item for item in validators if item["id"] != "python-unit-tests"],
+                    {
+                        **validators,
+                        "validators": [
+                            item
+                            for item in validators["validators"]
+                            if item["id"] != "python-unit-tests"
+                        ],
+                    },
                     stream,
                 )
             audit = AuditStore(Path(directory) / "audit")

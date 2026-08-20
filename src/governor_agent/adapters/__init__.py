@@ -8,6 +8,7 @@ from governor_agent.adapters.contracts import (
     GovernanceSourceError,
     ValidatorUnavailableError,
     ValidatorKind,
+    ValidatorRegistry,
     ValidatorSpec,
 )
 from governor_agent.adapters.synthetic import SyntheticFactoryAdapter
@@ -35,5 +36,6 @@ __all__ = [
     "SyntheticFactoryAdapter",
     "ValidatorUnavailableError",
     "ValidatorKind",
+    "ValidatorRegistry",
     "ValidatorSpec",
 ]

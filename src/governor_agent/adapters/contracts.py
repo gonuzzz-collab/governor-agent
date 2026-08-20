@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Protocol
+from typing import TYPE_CHECKING, Literal, Protocol
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from governor_agent.domain import (
     AuthorityGrant,
@@ -65,6 +65,22 @@ class ValidatorSpec(BaseModel):
     id: str = Field(min_length=1)
     kind: ValidatorKind
     timeout_seconds: int = Field(default=20, ge=1, le=60)
+
+
+class ValidatorRegistry(BaseModel):
+    """Versioned approved validators from one explicit normative source."""
+
+    model_config = MODEL_CONFIG
+
+    schema_version: Literal["governor.validator-registry.v1"]
+    validators: tuple[ValidatorSpec, ...] = Field(default=(), max_length=256)
+
+    @model_validator(mode="after")
+    def unique_validator_ids(self) -> "ValidatorRegistry":
+        validator_ids = tuple(validator.id for validator in self.validators)
+        if len(set(validator_ids)) != len(validator_ids):
+            raise ValueError("validator registry must not contain duplicate validator IDs")
+        return self
 
 
 class GovernanceSource(Protocol):
