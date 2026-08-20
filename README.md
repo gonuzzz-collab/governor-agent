@@ -53,6 +53,8 @@ ALLOW    BLOCK     ESCALATE
       Decision record
 ```
 
+![Governor Agent decision flow — MVP](assets/governor-decision-flow-en.png)
+
 ### ALLOW
 The proposal is explicitly within scope and required evidence is present.
 
@@ -107,6 +109,8 @@ ALLOW / BLOCK / ESCALATE
       ↓
 Human-readable decision record
 ```
+
+![Governor Agent conceptual architecture](assets/governor-architecture-en.png)
 
 See [`docs/architecture.md`](docs/architecture.md) for the current conceptual architecture.
 

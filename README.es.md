@@ -53,6 +53,8 @@ ALLOW    BLOCK     ESCALATE
       Registro de decisión
 ```
 
+![Flujo de decisión de Governor Agent — MVP](assets/governor-decision-flow-es.png)
+
 ### ALLOW
 La propuesta está explícitamente dentro del alcance autorizado y cuenta con la evidencia requerida.
 
@@ -107,6 +109,8 @@ ALLOW / BLOCK / ESCALATE
       ↓
 Registro de decisión legible por humanos
 ```
+
+![Arquitectura conceptual de Governor Agent](assets/governor-architecture-es.png)
 
 Consulta [`docs/architecture.md`](docs/architecture.md) para la arquitectura conceptual actual.
 
