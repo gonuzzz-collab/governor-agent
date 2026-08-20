@@ -212,6 +212,25 @@ class ChangePermit(BaseModel):
         return value
 
 
+class PermitRegistry(BaseModel):
+    """Versioned permits from one explicit normative source."""
+
+    model_config = MODEL_CONFIG
+
+    schema_version: Literal["governor.permit-registry.v1"]
+    permits: tuple[ChangePermit, ...] = Field(default=(), max_length=512)
+
+    @model_validator(mode="after")
+    def unique_permit_and_request_ids(self) -> "PermitRegistry":
+        permit_ids = tuple(permit.permit_id for permit in self.permits)
+        request_ids = tuple(permit.request_id for permit in self.permits)
+        if len(set(permit_ids)) != len(permit_ids):
+            raise ValueError("permit registry must not contain duplicate permit IDs")
+        if len(set(request_ids)) != len(request_ids):
+            raise ValueError("permit registry must not contain duplicate request IDs")
+        return self
+
+
 class Policy(BaseModel):
     model_config = MODEL_CONFIG
 

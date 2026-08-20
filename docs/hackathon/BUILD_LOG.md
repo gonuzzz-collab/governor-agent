@@ -263,3 +263,11 @@ PROVENANCE.md instead of being presented as Governor progress.
   inputs are covered by focused tests, including failure-recovery compatibility.
 - Boundary: the private factory still has no machine-readable capability registry and remains
   intentionally incomplete for real governance evaluation.
+
+## 2026-08-20 - Versioned synthetic permit registry
+
+- Goal: make the demo's request-specific authority source explicit without turning absent permits
+  into malformed configuration.
+- Implementation: `PermitRegistry` requires `governor.permit-registry.v1`, rejects duplicate permit
+  and request IDs, and permits an empty collection so absence resolves deterministically to DENY.
+- Boundary: no private Change Permit tool output or factory source was parsed, copied, or changed.

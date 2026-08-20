@@ -23,6 +23,7 @@ from governor_agent.domain import (
     ChangePermit,
     ChangeRequest,
     Policy,
+    PermitRegistry,
 )
 
 T = TypeVar("T", bound=BaseModel)
@@ -71,11 +72,8 @@ class SyntheticFactoryAdapter:
         return self._read_models("policies.json", Policy)
 
     def get_permit(self, request_id: str) -> ChangePermit | None:
-        matches = [
-            permit
-            for permit in self._read_models("permits.json", ChangePermit)
-            if permit.request_id == request_id
-        ]
+        registry = self._read_model("permits.json", PermitRegistry)
+        matches = [permit for permit in registry.permits if permit.request_id == request_id]
         if len(matches) > 1:
             raise GovernanceSourceError(f"duplicate permit for request: {request_id}")
         return matches[0] if matches else None

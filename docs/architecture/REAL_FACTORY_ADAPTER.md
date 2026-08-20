@@ -58,6 +58,11 @@ requires an explicit version and one unique capability ID because the current `G
 contract resolves capabilities by ID. Missing, legacy, malformed, or ambiguous capabilities fail
 closed; the private factory capability inventory remains absent.
 
+The fixture's `governor.permit-registry.v1` contract in `permits.json` permits an empty registry,
+which resolves to no permit and is therefore denied by deterministic evaluation. It rejects missing
+or legacy schemas and duplicate permit or request IDs. The private factory permit registry remains
+absent and is not inferred from workflow tools.
+
 ## Golden Path analysis
 
 Confirmed machine-readable facts are catalog adoption state and the project automation manifests.

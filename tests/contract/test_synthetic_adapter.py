@@ -95,3 +95,26 @@ class SyntheticAdapterContractTest(unittest.TestCase):
             source = SyntheticFactoryAdapter(copied)
             with self.assertRaisesRegex(GovernanceSourceError, "invalid capabilities.json"):
                 source.get_capability("change")
+
+    def test_legacy_permit_list_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            copied = Path(directory) / "factory"
+            shutil.copytree(FACTORY, copied)
+            (copied / "permits.json").write_text(
+                json.dumps([{"permit_id": "permit", "request_id": "request"}]),
+                encoding="utf-8",
+            )
+            source = SyntheticFactoryAdapter(copied)
+            with self.assertRaisesRegex(GovernanceSourceError, "invalid permits.json"):
+                source.get_permit("request")
+
+    def test_empty_permit_registry_returns_no_permit(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            copied = Path(directory) / "factory"
+            shutil.copytree(FACTORY, copied)
+            (copied / "permits.json").write_text(
+                json.dumps({"schema_version": "governor.permit-registry.v1", "permits": []}),
+                encoding="utf-8",
+            )
+            source = SyntheticFactoryAdapter(copied)
+            self.assertIsNone(source.get_permit("request"))

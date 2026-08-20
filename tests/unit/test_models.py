@@ -12,6 +12,7 @@ from governor_agent.domain.models import (
     ChangeRequest,
     Policy,
     PolicyKind,
+    PermitRegistry,
 )
 from governor_agent.domain.paths import UnsafePathError, matches_patterns, validate_relative_path
 
@@ -139,6 +140,38 @@ class SchemaContractTests(unittest.TestCase):
                     ],
                 }
             )
+
+    def test_permit_registry_rejects_duplicate_request_ids(self) -> None:
+        with self.assertRaisesRegex(ValidationError, "duplicate request IDs"):
+            PermitRegistry.model_validate(
+                {
+                    "schema_version": "governor.permit-registry.v1",
+                    "permits": [
+                        {
+                            "permit_id": "permit-a",
+                            "request_id": "request-a",
+                            "capability": "change",
+                            "actor": "builder",
+                            "environment": "local",
+                            "rollback": "Revert the requested change.",
+                        },
+                        {
+                            "permit_id": "permit-b",
+                            "request_id": "request-a",
+                            "capability": "change",
+                            "actor": "builder",
+                            "environment": "local",
+                            "rollback": "Revert the requested change.",
+                        },
+                    ],
+                }
+            )
+
+    def test_permit_registry_allows_no_permits(self) -> None:
+        registry = PermitRegistry.model_validate(
+            {"schema_version": "governor.permit-registry.v1", "permits": []}
+        )
+        self.assertEqual(registry.permits, ())
 
 
 if __name__ == "__main__":
